@@ -1,0 +1,79 @@
+2026-02-09 02:55:58.524 [info] [main] Nivel de registro: Info
+2026-02-09 02:55:58.524 [info] [main] Validando git encontrado en: "/usr/bin/git"
+2026-02-09 02:55:58.546 [info] [main] Usando git "2.50.1 (Apple Git-155)" de "/usr/bin/git"
+2026-02-09 02:55:58.546 [info] [Model][doInitialScan] Initial repository scan started
+2026-02-09 02:55:58.547 [info] [Model][doInitialScan] Initial repository scan completed - repositories (0), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2026-02-09 02:56:00.955 [info] [main] Nivel de registro: Info
+2026-02-09 02:56:00.964 [info] [main] Validando git encontrado en: "/usr/bin/git"
+2026-02-09 02:56:01.001 [info] [main] Usando git "2.50.1 (Apple Git-155)" de "/usr/bin/git"
+2026-02-09 02:56:01.001 [info] [Model][doInitialScan] Initial repository scan started
+2026-02-09 02:56:01.022 [info] > git rev-parse --show-toplevel [18ms]
+2026-02-09 02:56:01.052 [info] > git rev-parse --git-dir --git-common-dir --show-superproject-working-tree [29ms]
+2026-02-09 02:56:01.058 [info] [Model][openRepository] Opened repository (path): /Users/jordangonzalez/Downloads/Project Manager
+2026-02-09 02:56:01.058 [info] [Model][openRepository] Opened repository (real path): /Users/jordangonzalez/Downloads/Project Manager
+2026-02-09 02:56:01.058 [info] [Model][openRepository] Opened repository (kind): repository
+2026-02-09 02:56:01.063 [info] [Git][getRemotes] No remotes found in the git config file
+2026-02-09 02:56:01.087 [info] > git config --get commit.template [26ms]
+2026-02-09 02:56:01.088 [info] > git rev-parse --show-toplevel [27ms]
+2026-02-09 02:56:01.094 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [31ms]
+2026-02-09 02:56:01.095 [warning] [Git][getBranch] No such branch: main
+2026-02-09 02:56:01.293 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [197ms]
+2026-02-09 02:56:01.295 [info] > git rev-parse --show-toplevel [206ms]
+2026-02-09 02:56:01.315 [info] > git rev-parse --show-toplevel [18ms]
+2026-02-09 02:56:01.333 [info] > git rev-parse --show-toplevel [17ms]
+2026-02-09 02:56:01.349 [info] > git rev-parse --show-toplevel [15ms]
+2026-02-09 02:56:01.351 [info] [Model][doInitialScan] Initial repository scan completed - repositories (1), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2026-02-09 02:56:03.836 [info] > git status -z -uall [2740ms] (cancelled)
+2026-02-09 02:56:03.841 [info] [Git][getRemotes] No remotes found in the git config file
+2026-02-09 02:56:03.866 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [41ms]
+2026-02-09 02:56:03.867 [warning] [Git][getBranch] No such branch: main
+2026-02-09 02:56:03.867 [error] [GitHistoryProvider][resolveHEADMergeBase] Failed to resolve merge base for main: Error: No such branch: main.
+2026-02-09 02:56:04.673 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [832ms]
+2026-02-09 02:56:04.674 [warning] [Git][getBranch] No such branch: main
+2026-02-09 02:56:04.675 [info] > git config --get commit.template [840ms]
+2026-02-09 02:56:04.832 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [146ms]
+2026-02-09 02:56:05.704 [info] > git status -z -uall [1020ms] (cancelled)
+2026-02-09 02:56:12.797 [info] > git check-ignore -v -z --stdin [55ms]
+2026-02-09 02:56:44.363 [info] > git check-ignore -v -z --stdin [42ms]
+2026-02-09 02:56:45.974 [info] > git -c user.useConfigOnly=true commit --quiet --allow-empty-message --file - [58ms]
+2026-02-09 02:56:45.974 [info] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: no email was given and auto-detection is disabled
+2026-02-09 02:56:45.990 [info] > git config --get-all user.name [15ms]
+2026-02-09 02:56:45.991 [info] [Git][getRemotes] No remotes found in the git config file
+2026-02-09 02:56:46.005 [info] > git config --get commit.template [13ms]
+2026-02-09 02:56:46.005 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [14ms]
+2026-02-09 02:56:46.005 [warning] [Git][getBranch] No such branch: main
+2026-02-09 02:56:46.020 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [14ms]
+2026-02-09 02:56:46.608 [info] > git status -z -uall [602ms] (cancelled)
+2026-02-09 02:59:45.720 [info] > git -c user.useConfigOnly=true commit --quiet --allow-empty-message --file - [195ms]
+2026-02-09 02:59:45.721 [info] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: no email was given and auto-detection is disabled
+2026-02-09 02:59:45.735 [info] > git config --get-all user.name [14ms]
+2026-02-09 02:59:45.738 [info] [Git][getRemotes] No remotes found in the git config file
+2026-02-09 02:59:45.753 [info] > git config --get commit.template [16ms]
+2026-02-09 02:59:45.755 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [18ms]
+2026-02-09 02:59:45.755 [warning] [Git][getBranch] No such branch: main
+2026-02-09 02:59:45.771 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [14ms]
+2026-02-09 02:59:47.005 [info] > git status -z -uall [1249ms] (cancelled)

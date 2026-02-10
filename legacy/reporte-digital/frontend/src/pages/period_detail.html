@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Nómina - MICSA RH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background: rgba(0, 51, 102, 0.8);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 102, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-gray-100">
+
+    <nav class="bg-primary/90 backdrop-blur-md text-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="nomina.html" class="mr-4 text-gray-400 hover:text-white"><i class="fas fa-arrow-left"></i>
+                        Volver</a>
+                    <div>
+                        <span class="font-bold text-xl" id="periodName">Cargando Periodo...</span>
+                        <span class="text-xs block text-blue-200" id="periodDates">...</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="stampBatch()"
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-certificate"></i> Timbrado Masivo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
+            <div class="glass-card rounded-xl p-4">
+                <p class="text-xs text-gray-400 uppercase">Total Percepciones</p>
+                <p class="text-2xl font-bold text-green-400" id="statPercepciones">$0.00</p>
+            </div>
+            <div class="glass-card rounded-xl p-4">
+                <p class="text-xs text-gray-400 uppercase">Total Deducciones</p>
+                <p class="text-2xl font-bold text-red-400" id="statDeducciones">$0.00</p>
+            </div>
+            <div class="glass-card rounded-xl p-4">
+                <p class="text-xs text-gray-400 uppercase">Total Neto a Pagar</p>
+                <p class="text-2xl font-bold text-white" id="statNeto">$0.00</p>
+            </div>
+        </div>
+
+        <!-- Tabla de Recibos -->
+        <div class="glass-card rounded-xl overflow-hidden">
+            <table class="w-full data-table">
+                <thead>
+                    <tr class="text-left text-xs uppercase tracking-wider">
+                        <th class="px-6 py-4">Empleado</th>
+                        <th class="px-6 py-4">Percepciones</th>
+                        <th class="px-6 py-4">Deducciones</th>
+                        <th class="px-6 py-4">Neto</th>
+                        <th class="px-6 py-4">Estatus</th>
+                        <th class="px-6 py-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="receiptsTable" class="divide-y divide-white/10">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const periodId = urlParams.get('id');
+
+        async function loadData() {
+            if (!periodId) return location.href = 'nomina.html';
+
+            try {
+                // Info del periodo
+                const periodsRes = await fetch(`${API_URL}/payroll/periods`);
+                const periods = await periodsRes.json();
+                const period = periods.find(p => p.id == periodId);
+
+                if (period) {
+                    document.getElementById('periodName').textContent = period.name;
+                    document.getElementById('periodDates').textContent = `${period.start_date} al ${period.end_date} (Pago: ${period.payment_date})`;
+                }
+
+                const res = await fetch(`${API_URL}/payroll/periods/${periodId}/receipts`);
+                const receipts = await res.json();
+                renderReceipts(receipts);
+                updateTotals(receipts);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderReceipts(receipts) {
+            const tbody = document.getElementById('receiptsTable');
+            tbody.innerHTML = receipts.map(r => `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-medium">${r.employee_name}</div>
+                        <div class="text-xs text-gray-500">${r.position || ''}</div>
+                    </td>
+                    <td class="px-6 py-4 text-green-400 font-mono">${formatCurrency(r.total_percepciones)}</td>
+                    <td class="px-6 py-4 text-red-400 font-mono">${formatCurrency(r.total_deducciones)}</td>
+                    <td class="px-6 py-4 font-bold font-mono">${formatCurrency(r.total_neto)}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-bold ${getStatusClass(r.status)}">${r.status}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex gap-2">
+                            <button class="p-2 bg-white/5 hover:bg-white/10 rounded" title="Ver Detalle"><i class="fas fa-eye text-blue-400"></i></button>
+                            ${r.status === 'stamped' ? `
+                                <button class="p-2 bg-white/5 hover:bg-white/10 rounded"><i class="fas fa-file-pdf text-red-400"></i></button>
+                                <button class="p-2 bg-white/5 hover:bg-white/10 rounded"><i class="fas fa-file-code text-blue-300"></i></button>
+                            ` : `
+                                <button onclick="stampSingle(${r.id})" class="p-2 bg-white/10 hover:bg-green-600/30 rounded text-green-400" title="Timbrar"><i class="fas fa-stamp"></i></button>
+                            `}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateTotals(receipts) {
+            const totals = receipts.reduce((acc, r) => ({
+                p: acc.p + r.total_percepciones,
+                d: acc.d + r.total_deducciones,
+                n: acc.n + r.total_neto
+            }), { p: 0, d: 0, n: 0 });
+
+            document.getElementById('statPercepciones').textContent = formatCurrency(totals.p);
+            document.getElementById('statDeducciones').textContent = formatCurrency(totals.d);
+            document.getElementById('statNeto').textContent = formatCurrency(totals.n);
+        }
+
+        function formatCurrency(v) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v); }
+
+        function getStatusClass(s) {
+            if (s === 'stamped') return 'bg-green-500/20 text-green-400';
+            if (s === 'draft') return 'bg-blue-500/20 text-blue-400';
+            return 'bg-gray-500/20 text-gray-400';
+        }
+
+        async function stampBatch() {
+            if (!confirm('¿Deseas iniciar el TIMBRADO MASIVO de todos los recibos pendientes? Esta acción es irreversible ante el SAT.')) return;
+
+            const btn = event.target.closest('button');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Timbrando...';
+
+            try {
+                const res = await fetch(`${API_URL}/payroll/periods/${periodId}/stamp`, { method: 'POST' });
+                const result = await res.json();
+
+                if (res.ok) {
+                    alert(`Éxito: ${result.stampedCount} recibos timbrados correctamente.`);
+                    if (result.errors.length > 0) {
+                        console.warn('Errores:', result.errors);
+                        alert('Algunos recibos tuvieron errores. Revisa la consola.');
+                    }
+                    loadData();
+                } else {
+                    alert('Error en el proceso: ' + (result.error || 'Desconocido'));
+                }
+            } catch (err) {
+                alert('Error de conexión con el servicio de timbrado');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-certificate"></i> Timbrado Masivo';
+            }
+        }
+
+        async function stampSingle(id) {
+            // Reutilizamos la lógica masiva del backend filtrando por ID si fuera necesario, 
+            // pero para simplificar, el botón del UI ahora llama a un proceso robusto.
+            alert('Utiliza el botón de Timbrado Masivo para procesar los recibos pendientes.');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.checkAuth()) loadData();
+        });
+    </script>
+</body>
+
+</html>

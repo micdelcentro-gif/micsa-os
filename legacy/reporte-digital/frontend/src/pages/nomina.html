@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nómina - MICSA RH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background: rgba(0, 51, 102, 0.8);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 102, 0, 0.1);
+        }
+
+        .modal {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body class="text-gray-100">
+
+    <nav class="bg-primary/90 backdrop-blur-md text-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="../assets/logo-micsa.png" alt="MICSA" class="h-10 w-auto mr-3 bg-white p-1 rounded">
+                    <div>
+                        <span class="font-bold text-xl">Módulo de Nómina</span>
+                        <span class="text-xs block text-blue-200">Recursos Humanos</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="config_rh.html"
+                        class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <i class="fas fa-cog"></i> Configuración Fiscal
+                    </a>
+                    <a href="/" class="hover:text-secondary transition-colors"><i class="fas fa-home"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h1 class="text-2xl font-bold">Gestión de Periodos de Nómina</h1>
+                <p class="text-gray-400">Crea periodos, calcula percepciones y timbra recibos.</p>
+            </div>
+            <button onclick="openModal('periodModal')"
+                class="px-6 py-3 bg-secondary hover:bg-orange-600 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+                <i class="fas fa-plus"></i> Nuevo Periodo
+            </button>
+        </div>
+
+        <!-- Lista de Periodos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="periodsContainer">
+            <!-- Cargando... -->
+        </div>
+
+        <div id="noPeriods" class="hidden glass-card rounded-xl p-20 text-center">
+            <i class="fas fa-calendar-alt text-6xl text-gray-500 mb-4"></i>
+            <p class="text-xl text-gray-400">No hay periodos creados. Comienza por crear uno nuevo.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Nuevo Periodo -->
+    <div id="periodModal" class="modal fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-2xl p-8 border border-white/20">
+            <h2 class="text-xl font-bold mb-6">Nuevo Periodo de Nómina</h2>
+            <form id="periodForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Nombre del Periodo</label>
+                    <input type="text" name="name" required placeholder="Eje: Semana 01 - 2026"
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Inicio</label>
+                        <input type="date" name="start_date" required
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Fin</label>
+                        <input type="date" name="end_date" required
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Fecha de Pago</label>
+                    <input type="date" name="payment_date" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Periodicidad</label>
+                        <select name="periodicidad"
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                            <option value="02">Semanal</option>
+                            <option value="04">Quincenal</option>
+                            <option value="05">Mensual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-1">Tipo</label>
+                        <select name="type" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2">
+                            <option value="O">Ordinaria</option>
+                            <option value="E">Extraordinaria</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal('periodModal')"
+                        class="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg">Cancelar</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-secondary hover:bg-orange-600 rounded-lg font-bold">Crear
+                        Periodo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        async function loadPeriods() {
+            try {
+                const res = await fetch(`${API_URL}/payroll/periods`);
+                const periods = await res.json();
+                renderPeriods(periods);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderPeriods(periods) {
+            const container = document.getElementById('periodsContainer');
+            if (periods.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('noPeriods').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('noPeriods').classList.add('hidden');
+
+            container.innerHTML = periods.map(p => `
+                <div class="glass-card rounded-2xl p-6 border-l-4 ${getStatusColor(p.status)}">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs uppercase px-2 py-1 bg-white/10 rounded">${p.periodicidad === '02' ? 'Semanal' : 'Quincenal'}</span>
+                        <span class="text-xs font-bold uppercase ${getStatusTextColor(p.status)}">${p.status}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">${p.name}</h3>
+                    <div class="text-sm text-gray-400 mb-4">
+                        <p><i class="far fa-calendar-alt w-5"></i> ${p.start_date} al ${p.end_date}</p>
+                        <p><i class="far fa-credit-card w-5"></i> Pago: ${p.payment_date}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="viewPeriod(${p.id})" class="flex-1 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg text-sm font-bold transition-all">Ver Detalle</button>
+                        ${p.status === 'open' ? `<button onclick="processPeriod(${p.id})" class="flex-1 py-2 bg-green-600/20 hover:bg-green-600/40 text-green-400 rounded-lg text-sm font-bold transition-all">Calcular</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            return {
+                'open': 'border-blue-500',
+                'processed': 'border-yellow-500',
+                'stamped': 'border-green-500',
+                'closed': 'border-gray-500'
+            }[status] || 'border-white/20';
+        }
+
+        function getStatusTextColor(status) {
+            return {
+                'open': 'text-blue-400',
+                'processed': 'text-yellow-400',
+                'stamped': 'text-green-400',
+                'closed': 'text-gray-400'
+            }[status] || 'text-white';
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        document.getElementById('periodForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            try {
+                const res = await fetch(`${API_URL}/payroll/periods`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    closeModal('periodModal');
+                    loadPeriods();
+                }
+            } catch (err) { alert('Error al crear'); }
+        };
+
+        function viewPeriod(id) {
+            window.location.href = `period_detail.html?id=${id}`;
+        }
+
+        async function processPeriod(id) {
+            if (!confirm('¿Deseas calcular la nómina para todos los empleados en este periodo?')) return;
+            try {
+                const res = await fetch(`${API_URL}/payroll/periods/${id}/generate`, { method: 'POST' });
+                if (res.ok) {
+                    alert('Nómina calculada (borrador). Revisa los recibos.');
+                    loadPeriods();
+                }
+            } catch (err) { alert('Error al procesar'); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.checkAuth()) loadPeriods();
+        });
+    </script>
+</body>
+
+</html>

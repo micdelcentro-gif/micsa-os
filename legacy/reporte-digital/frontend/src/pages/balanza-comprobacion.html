@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Balanza de Comprobación</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .trial-balance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .trial-balance-table th {
+            text-align: left;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 2px solid var(--card-border);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .trial-balance-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            width: 140px;
+        }
+
+        .row-total {
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Dashbord</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">⚖️</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Contabilidad Integral</p>
+            </div>
+            <div class="header-info">
+                <h1>BALANZA DE COMPROBACIÓN</h1>
+                <p>Verificación de Cargos y Abonos por Periodo</p>
+            </div>
+        </header>
+
+        <div class="filter-bar" style="margin-top: 40px;">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <label>Periodo:</label>
+                <input type="date" id="dateStart" class="btn btn-secondary"
+                    style="background: var(--input-bg); border: 1px solid var(--card-border);">
+                <span>a</span>
+                <input type="date" id="dateEnd" class="btn btn-secondary"
+                    style="background: var(--input-bg); border: 1px solid var(--card-border);">
+            </div>
+            <button class="btn btn-primary" onclick="loadTrialBalance()" style="padding: 10px 25px;">Consultar
+                Balanza</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ PDF</button>
+        </div>
+
+        <table class="trial-balance-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre de la Cuenta</th>
+                    <th class="amount-cell">Debe (Cargos)</th>
+                    <th class="amount-cell">Haber (Abonos)</th>
+                    <th class="amount-cell">Saldo Final</th>
+                </tr>
+            </thead>
+            <tbody id="trialBody">
+                <!-- JS content -->
+            </tbody>
+            <tfoot>
+                <tr class="row-total">
+                    <td colspan="2" style="text-align: right;">SUMAS IGUALES:</td>
+                    <td id="totalDebe" class="amount-cell">$0.00</td>
+                    <td id="totalHaber" class="amount-cell">$0.00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA Soluciones Industriales | Balanza Generada en Tiempo Real</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+            document.getElementById('dateStart').value = firstDay;
+            document.getElementById('dateEnd').value = lastDay;
+            loadTrialBalance();
+        });
+
+        async function loadTrialBalance() {
+            const start = document.getElementById('dateStart').value;
+            const end = document.getElementById('dateEnd').value;
+
+            try {
+                const response = await fetch(`/api/accounting/reports/trial-balance?start=${start}&end=${end}`);
+                const data = await response.json();
+                const tbody = document.getElementById('trialBody');
+                tbody.innerHTML = '';
+
+                let totalDebe = 0;
+                let totalHaber = 0;
+
+                data.forEach(row => {
+                    totalDebe += row.total_debit || 0;
+                    totalHaber += row.total_credit || 0;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.code}</td>
+                        <td>${row.name}</td>
+                        <td class="amount-cell">${formatCurrency(row.total_debit || 0)}</td>
+                        <td class="amount-cell">${formatCurrency(row.total_credit || 0)}</td>
+                        <td class="amount-cell" style="font-weight: 600;">${formatCurrency(row.final_balance || 0)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('totalDebe').textContent = formatCurrency(totalDebe);
+                document.getElementById('totalHaber').textContent = formatCurrency(totalHaber);
+
+                if (Math.abs(totalDebe - totalHaber) > 0.01) {
+                    alert('⚠️ Advertencia: La balanza no está cuadrada por una diferencia de ' + formatCurrency(totalDebe - totalHaber));
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+    </script>
+</body>
+
+</html>

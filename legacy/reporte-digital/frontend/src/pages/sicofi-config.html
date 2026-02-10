@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Conectividad Sicofi</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .sicofi-config-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .online {
+            color: var(--verde-micsa);
+        }
+
+        .offline {
+            color: var(--rojo-micsa);
+        }
+
+        .api-fields {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Herramientas Contador</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">🔗</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Integración de Servicios Externos</p>
+            </div>
+        </header>
+
+        <div class="sicofi-config-card">
+            <img src="https://sicofi.com.mx/Assets/Images/Logos/logo-sicofi.png" alt="Sicofi"
+                style="height: 40px; margin-bottom: 20px; filter: brightness(10);">
+
+            <div id="connectionStatus" class="status-indicator offline">
+                <span class="dot">●</span> Verificando conexión...
+            </div>
+
+            <h2>Configuración de la API</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;">Tu cuenta de Sicofi está enlazada para el
+                timbrado automático de CFDI 4.0 y Nómina.</p>
+
+            <div class="api-fields">
+                <div class="input-group">
+                    <label>Usuario / Email (Sicofi)</label>
+                    <input type="text" id="sicofiUser" value="jgonzalez@micsadelcentro.com" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña API</label>
+                    <input type="password" id="sicofiPass" value="**********" readonly>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="testConnection()">Probar
+                    Conexión Ahora</button>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px; background: #6366f1;"
+                    onclick="testPayrollStamp()">Simular Timbrado Nómina Real</button>
+            </div>
+
+            <div id="testResult" style="margin-top: 20px; font-size: 0.9rem;"></div>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>CON ELLOS FACTURO Y HAGO ESO - Integración Sicofi v4.0</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', testConnection);
+
+        async function testConnection() {
+            const result = document.getElementById('testResult');
+            const statusIndicator = document.getElementById('connectionStatus');
+            result.innerHTML = 'Conectando con servidores de Sicofi...';
+
+            try {
+                const res = await fetch('/api/accounting/audit/test-sicofi', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success) {
+                    statusIndicator.className = 'status-indicator online';
+                    statusIndicator.innerHTML = '<span class="dot">●</span> Sicofi ONLINE';
+                    result.innerHTML = `<span style="color:var(--verde-micsa)">✅ ${data.message}</span>`;
+                } else {
+                    statusIndicator.className = 'status-indicator offline';
+                    statusIndicator.innerHTML = '<span class="dot">●</span> Sicofi ERROR';
+                    result.innerHTML = `<span style="color:var(--rojo-micsa)">❌ ${data.message}</span>`;
+                }
+            } catch (err) {
+                result.innerHTML = 'Error de red al intentar conectar.';
+            }
+        }
+
+        async function testPayrollStamp() {
+            const result = document.getElementById('testResult');
+            result.innerHTML = 'Enviando petición de timbrado a Sicofi...';
+
+            try {
+                const res = await fetch('/api/payroll/test-sicofi-stamp', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.success) {
+                    result.innerHTML = `
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--verde-micsa);">
+                            <strong style="color: var(--verde-micsa);">¡CONEXIÓN EXITOSA!</strong><br>
+                            <p style="margin-top: 10px;">${data.message}</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">${data.details}</p>
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = `<span style="color:var(--rojo-micsa)">❌ ERROR: ${JSON.stringify(data.error || data.message)}</span>`;
+                }
+            } catch (err) {
+                result.innerHTML = 'Error de red en el timbrado.';
+            }
+        }
+    </script>
+</body>
+
+</html>

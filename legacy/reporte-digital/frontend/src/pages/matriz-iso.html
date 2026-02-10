@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Matriz de Documentación ISO 9001:2015</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+    <style>
+        /* Estilos específicos para la matriz */
+        .matriz-container {
+            overflow-x: auto;
+        }
+
+        .matriz-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1200px;
+        }
+
+        .matriz-table th {
+            position: sticky;
+            top: 0;
+            background: var(--gradient-primary);
+            z-index: 10;
+        }
+
+        .matriz-table td {
+            padding: 10px 12px;
+            vertical-align: middle;
+        }
+
+        .matriz-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tipo-politica {
+            background: #7c3aed20;
+            color: #a78bfa;
+        }
+
+        .tipo-manual {
+            background: #0891b220;
+            color: #22d3ee;
+        }
+
+        .tipo-procedimiento {
+            background: #059669 20;
+            color: #34d399;
+        }
+
+        .tipo-registro {
+            background: #d9770620;
+            color: #fbbf24;
+        }
+
+        .tipo-formato {
+            background: #dc262620;
+            color: #f87171;
+        }
+
+        .tipo-instructivo {
+            background: #2563eb20;
+            color: #60a5fa;
+        }
+
+        .tipo-programa {
+            background: #db277720;
+            color: #f472b6;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .filter-select {
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            min-width: 180px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-color);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .version-table {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .version-table th,
+        .version-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .notes-list {
+            padding: 24px;
+        }
+
+        .notes-list ol {
+            padding-left: 24px;
+        }
+
+        .notes-list li {
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .notes-list strong {
+            color: var(--text-primary);
+        }
+
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .nav-breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-export {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export:hover {
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../../index.html">🏠 Dashboard</a>
+            <span>›</span>
+            <span>Matriz de Documentación ISO 9001:2015</span>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo">
+                    <span class="logo-icon">🏗️</span>
+                    <span class="logo-text">MICSA</span>
+                </div>
+                <p class="logo-subtitle">Soluciones Industriales</p>
+            </div>
+            <div class="header-info">
+                <h1>MATRIZ DE DOCUMENTACIÓN ISO 9001:2015</h1>
+                <p>Sistema de Gestión de Calidad</p>
+                <div class="doc-info">
+                    <span>Norma: ISO 9001:2015</span>
+                    <span>Versión: 1.0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Estadísticas -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDocs">87</div>
+                <div class="stat-label">Total Documentos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Políticas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Manuales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">26</div>
+                <div class="stat-label">Procedimientos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">21</div>
+                <div class="stat-label">Registros</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">31</div>
+                <div class="stat-label">Formatos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Instructivos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Programas</div>
+            </div>
+        </section>
+
+        <!-- Filtros y Búsqueda -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">📋</span>
+                <h2>DOCUMENTOS DEL SISTEMA DE GESTIÓN DE CALIDAD</h2>
+            </div>
+            <div style="padding: 24px;">
+                <div class="search-filters">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Buscar documento, código, requisito..."
+                            oninput="filterTable()">
+                    </div>
+                    <select class="filter-select" id="filterClausula" onchange="filterTable()">
+                        <option value="">Todas las Cláusulas</option>
+                        <option value="4">4. Contexto de la Organización</option>
+                        <option value="5">5. Liderazgo</option>
+                        <option value="6">6. Planificación</option>
+                        <option value="7">7. Apoyo</option>
+                        <option value="8">8. Operación</option>
+                        <option value="9">9. Evaluación del Desempeño</option>
+                        <option value="10">10. Mejora</option>
+                    </select>
+                    <select class="filter-select" id="filterTipo" onchange="filterTable()">
+                        <option value="">Todos los Tipos</option>
+                        <option value="Política">Política</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Procedimiento">Procedimiento</option>
+                        <option value="Registro">Registro</option>
+                        <option value="Formato">Formato</option>
+                        <option value="Instructivo">Instructivo</option>
+                        <option value="Programa">Programa</option>
+                    </select>
+                    <select class="filter-select" id="filterArea" onchange="filterTable()">
+                        <option value="">Todas las Áreas</option>
+                        <option value="Dirección">Dirección</option>
+                        <option value="Calidad">Calidad</option>
+                        <option value="Operaciones">Operaciones</option>
+                        <option value="Compras">Compras</option>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Ingeniería">Ingeniería</option>
+                    </select>
+                    <div class="export-buttons">
+                        <button class="btn-export" onclick="exportToExcel()">📊 Excel</button>
+                        <button class="btn-export" onclick="window.print()">📄 PDF</button>
+                    </div>
+                </div>
+                <p class="results-count">Mostrando <span id="resultsCount">87</span> documentos</p>
+
+                <div class="matriz-container">
+                    <table class="matriz-table" id="matrizTable">
+                        <thead>
+                            <tr>
+                                <th>Cláusula</th>
+                                <th>Requisito</th>
+                                <th>Documento</th>
+                                <th>Tipo</th>
+                                <th>Código</th>
+                                <th>Área</th>
+                                <th>Responsable</th>
+                                <th>Ver.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrizBody">
+                            <!-- Los datos se cargan dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notas Importantes -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">ℹ️</span>
+                <h2>NOTAS IMPORTANTES</h2>
+            </div>
+            <div class="notes-list">
+                <ol>
+                    <li><strong>Codificación de documentos:</strong> Utiliza el formato SGC-XX-### donde XX indica el
+                        tipo (PO=Política, PR=Procedimiento, IN=Instructivo, FO=Formato, RG=Registro, DR=Documento de
+                        Referencia, MN=Manual, PG=Programa)</li>
+                    <li><strong>Fechas de emisión:</strong> Las fechas marcadas como [DD/MM/AAAA] deben ser reemplazadas
+                        con las fechas reales de emisión de cada documento</li>
+                    <li><strong>Responsables:</strong> Los nombres de los responsables deben ser asignados según la
+                        estructura organizacional específica de MICSA</li>
+                    <li><strong>Medio de control:</strong> Todos los documentos están diseñados para gestión digital,
+                        pero pueden adaptarse a formato físico según necesidad</li>
+                    <li><strong>Actualización:</strong> Esta matriz debe revisarse y actualizarse al menos anualmente o
+                        cuando existan cambios significativos en el SGC</li>
+                    <li><strong>Auditoría:</strong> Esta matriz sirve como referencia cruzada durante auditorías
+                        internas y externas para verificar la completitud del sistema documental</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Control de Versiones -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">📝</span>
+                <h2>CONTROL DE VERSIONES DE LA MATRIZ</h2>
+            </div>
+            <div class="table-container">
+                <table class="version-table">
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Fecha</th>
+                            <th>Modificación Realizada</th>
+                            <th>Responsable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1.0</td>
+                            <td><input type="date" value="2026-01-13"></td>
+                            <td>Versión inicial para establecimiento del SGC bajo ISO 9001:2015</td>
+                            <td><input type="text" placeholder="Director de Calidad"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="add-row-btn" onclick="addVersionRow()">+ Agregar Versión</button>
+            </div>
+        </section>
+
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+            <a href="../../index.html" class="btn btn-secondary">🏠 Ir al Dashboard</a>
+            <a href="reporte-diario.html" class="btn btn-primary">📋 Reporte Diario</a>
+            <a href="guia-iso.html" class="btn btn-success">📘 Guía de Implementación</a>
+        </div>
+    </div>
+
+    <script>
+        // Datos de la Matriz de Documentos ISO 9001:2015
+        const documentosISO = [
+            // Cláusula 4 - Contexto de la Organización
+            { clausula: "4.1", requisito: "Comprensión de la organización", documento: "Análisis de Contexto Organizacional", tipo: "Registro", codigo: "SGC-RG-001", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+            { clausula: "4.2", requisito: "Partes Interesadas", documento: "Matriz de Partes Interesadas", tipo: "Registro", codigo: "SGC-RG-002", area: "Dirección", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "4.3", requisito: "Alcance del SGC", documento: "Declaración de Alcance del Sistema", tipo: "Registro", codigo: "SGC-RG-003", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "4.4", requisito: "SGC y sus procesos", documento: "Mapa de Procesos", tipo: "Registro", codigo: "SGC-RG-004", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "4.4.1", requisito: "Procesos del SGC", documento: "Fichas de Caracterización de Procesos", tipo: "Formato", codigo: "SGC-FO-001", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+
+            // Cláusula 5 - Liderazgo
+            { clausula: "5.1", requisito: "Liderazgo y compromiso", documento: "Acta de Compromiso de Dirección", tipo: "Registro", codigo: "SGC-RG-005", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+            { clausula: "5.2", requisito: "Política de calidad", documento: "Política de Calidad", tipo: "Política", codigo: "SGC-PO-001", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+            { clausula: "5.2.2", requisito: "Comunicación política", documento: "Procedimiento de Comunicación Interna", tipo: "Procedimiento", codigo: "SGC-PR-001", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "5.3", requisito: "Roles y responsabilidades", documento: "Manual de Organización y Funciones", tipo: "Manual", codigo: "SGC-MN-001", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+
+            // Cláusula 6 - Planificación
+            { clausula: "6.1", requisito: "Riesgos y oportunidades", documento: "Matriz de Riesgos y Oportunidades", tipo: "Registro", codigo: "SGC-RG-006", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "6.1.2", requisito: "Acciones para riesgos", documento: "Plan de Tratamiento de Riesgos", tipo: "Procedimiento", codigo: "SGC-PR-002", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "6.2", requisito: "Objetivos de calidad", documento: "Matriz de Objetivos de Calidad", tipo: "Registro", codigo: "SGC-RG-007", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "6.2.2", requisito: "Planificación objetivos", documento: "Plan de Acción para Objetivos", tipo: "Formato", codigo: "SGC-FO-002", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "6.3", requisito: "Planificación de cambios", documento: "Procedimiento de Gestión del Cambio", tipo: "Procedimiento", codigo: "SGC-PR-003", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+
+            // Cláusula 7 - Apoyo
+            { clausula: "7.1.1", requisito: "Recursos generales", documento: "Plan de Recursos", tipo: "Procedimiento", codigo: "SGC-PR-004", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+            { clausula: "7.1.2", requisito: "Personas", documento: "Procedimiento de Gestión del Personal", tipo: "Procedimiento", codigo: "SGC-PR-005", area: "Operaciones", responsable: "Jefe RRHH", version: "1.0" },
+            { clausula: "7.1.3", requisito: "Infraestructura", documento: "Plan de Mantenimiento de Infraestructura", tipo: "Procedimiento", codigo: "SGC-PR-006", area: "Operaciones", responsable: "Jefe Mant.", version: "1.0" },
+            { clausula: "7.1.4", requisito: "Ambiente de operación", documento: "Matriz de Condiciones de Trabajo", tipo: "Registro", codigo: "SGC-RG-008", area: "Operaciones", responsable: "Jefe Seg.", version: "1.0" },
+            { clausula: "7.1.5", requisito: "Recursos de seguimiento", documento: "Plan de Control de Equipos", tipo: "Procedimiento", codigo: "SGC-PR-007", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "7.1.5.2", requisito: "Trazabilidad de medición", documento: "Registro de Calibración de Equipos", tipo: "Registro", codigo: "SGC-RG-009", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "7.1.6", requisito: "Conocimientos", documento: "Gestión del Conocimiento Organizacional", tipo: "Procedimiento", codigo: "SGC-PR-008", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "7.2", requisito: "Competencia", documento: "Matriz de Competencias", tipo: "Registro", codigo: "SGC-RG-010", area: "Operaciones", responsable: "Jefe RRHH", version: "1.0" },
+            { clausula: "7.2", requisito: "Competencia", documento: "Programa de Capacitación", tipo: "Programa", codigo: "SGC-PG-001", area: "Operaciones", responsable: "Jefe RRHH", version: "1.0" },
+            { clausula: "7.3", requisito: "Toma de conciencia", documento: "Plan de Sensibilización SGC", tipo: "Procedimiento", codigo: "SGC-PR-009", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "7.4", requisito: "Comunicación", documento: "Matriz de Comunicaciones", tipo: "Registro", codigo: "SGC-RG-011", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "7.5", requisito: "Información documentada", documento: "Procedimiento Control de Documentos", tipo: "Procedimiento", codigo: "SGC-PR-010", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "7.5.2", requisito: "Creación documentos", documento: "Formato de Control Documental", tipo: "Formato", codigo: "SGC-FO-003", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "7.5.3", requisito: "Control de la información", documento: "Lista Maestra de Documentos", tipo: "Registro", codigo: "SGC-RG-012", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+
+            // Cláusula 8 - Operación
+            { clausula: "8.1", requisito: "Planificación operacional", documento: "Plan de Realización del Producto", tipo: "Procedimiento", codigo: "SGC-PR-011", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.2", requisito: "Requisitos productos", documento: "Procedimiento Comercial", tipo: "Procedimiento", codigo: "SGC-PR-012", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "8.2.1", requisito: "Comunicación cliente", documento: "Formato de Atención al Cliente", tipo: "Formato", codigo: "SGC-FO-004", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "8.2.2", requisito: "Determinación requisitos", documento: "Formato de Cotización", tipo: "Formato", codigo: "SGC-FO-005", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "8.2.3", requisito: "Revisión de requisitos", documento: "Formato de Orden de Trabajo", tipo: "Formato", codigo: "SGC-FO-006", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.2.4", requisito: "Cambios en requisitos", documento: "Control de Cambios en Pedidos", tipo: "Formato", codigo: "SGC-FO-007", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "8.3", requisito: "Diseño y desarrollo", documento: "Procedimiento de Diseño", tipo: "Procedimiento", codigo: "SGC-PR-013", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.3.2", requisito: "Planificación diseño", documento: "Plan de Diseño y Desarrollo", tipo: "Formato", codigo: "SGC-FO-008", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.3.3", requisito: "Entradas diseño", documento: "Especificaciones de Entrada", tipo: "Formato", codigo: "SGC-FO-009", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.3.4", requisito: "Controles diseño", documento: "Lista de Verificación Diseño", tipo: "Formato", codigo: "SGC-FO-010", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.3.5", requisito: "Salidas diseño", documento: "Planos y Especificaciones Técnicas", tipo: "Formato", codigo: "SGC-FO-011", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.3.6", requisito: "Cambios diseño", documento: "Control de Cambios de Diseño", tipo: "Formato", codigo: "SGC-FO-012", area: "Ingeniería", responsable: "Jefe Ing.", version: "1.0" },
+            { clausula: "8.4", requisito: "Control proveedores", documento: "Procedimiento de Compras", tipo: "Procedimiento", codigo: "SGC-PR-014", area: "Compras", responsable: "Jefe Compras", version: "1.0" },
+            { clausula: "8.4.1", requisito: "Evaluación proveedores", documento: "Matriz de Evaluación Proveedores", tipo: "Registro", codigo: "SGC-RG-013", area: "Compras", responsable: "Jefe Compras", version: "1.0" },
+            { clausula: "8.4.2", requisito: "Tipo de control", documento: "Criterios de Selección Proveedores", tipo: "Formato", codigo: "SGC-FO-013", area: "Compras", responsable: "Jefe Compras", version: "1.0" },
+            { clausula: "8.4.3", requisito: "Información proveedores", documento: "Orden de Compra", tipo: "Formato", codigo: "SGC-FO-014", area: "Compras", responsable: "Jefe Compras", version: "1.0" },
+            { clausula: "8.5", requisito: "Producción y servicio", documento: "Procedimiento de Producción", tipo: "Procedimiento", codigo: "SGC-PR-015", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.5.1", requisito: "Control producción", documento: "Instructivo de Fabricación", tipo: "Instructivo", codigo: "SGC-IN-001", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.5.1", requisito: "Control producción", documento: "Registro de Producción Diario", tipo: "Registro", codigo: "SGC-RG-014", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.5.2", requisito: "Identificación trazabilidad", documento: "Procedimiento de Trazabilidad", tipo: "Procedimiento", codigo: "SGC-PR-016", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "8.5.3", requisito: "Propiedad cliente", documento: "Control Propiedad del Cliente", tipo: "Formato", codigo: "SGC-FO-015", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.5.4", requisito: "Preservación", documento: "Instructivo de Almacenamiento", tipo: "Instructivo", codigo: "SGC-IN-002", area: "Operaciones", responsable: "Jefe Almacén", version: "1.0" },
+            { clausula: "8.5.5", requisito: "Actividades postventa", documento: "Procedimiento de Servicio Postventa", tipo: "Procedimiento", codigo: "SGC-PR-017", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "8.5.6", requisito: "Control de cambios", documento: "Control de Cambios Producción", tipo: "Formato", codigo: "SGC-FO-016", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.6", requisito: "Liberación productos", documento: "Procedimiento de Inspección Final", tipo: "Procedimiento", codigo: "SGC-PR-018", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "8.6", requisito: "Liberación productos", documento: "Formato de Liberación de Producto", tipo: "Formato", codigo: "SGC-FO-017", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "8.7", requisito: "Salidas no conformes", documento: "Procedimiento de No Conformidades", tipo: "Procedimiento", codigo: "SGC-PR-019", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "8.7", requisito: "Salidas no conformes", documento: "Registro de Producto No Conforme", tipo: "Registro", codigo: "SGC-RG-015", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+
+            // Cláusula 9 - Evaluación del Desempeño
+            { clausula: "9.1", requisito: "Seguimiento y medición", documento: "Plan de Seguimiento y Medición", tipo: "Procedimiento", codigo: "SGC-PR-020", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "9.1.2", requisito: "Satisfacción cliente", documento: "Encuesta de Satisfacción", tipo: "Formato", codigo: "SGC-FO-018", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "9.1.2", requisito: "Satisfacción cliente", documento: "Análisis de Satisfacción del Cliente", tipo: "Registro", codigo: "SGC-RG-016", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "9.1.3", requisito: "Análisis y evaluación", documento: "Informe de Indicadores SGC", tipo: "Registro", codigo: "SGC-RG-017", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "9.2", requisito: "Auditoría interna", documento: "Procedimiento de Auditoría Interna", tipo: "Procedimiento", codigo: "SGC-PR-021", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "9.2", requisito: "Auditoría interna", documento: "Programa Anual de Auditorías", tipo: "Programa", codigo: "SGC-PG-002", area: "Calidad", responsable: "Auditor Líder", version: "1.0" },
+            { clausula: "9.2.2", requisito: "Planificación auditoría", documento: "Plan de Auditoría Interna", tipo: "Formato", codigo: "SGC-FO-019", area: "Calidad", responsable: "Auditor Líder", version: "1.0" },
+            { clausula: "9.2.2", requisito: "Planificación auditoría", documento: "Lista de Verificación Auditoría", tipo: "Formato", codigo: "SGC-FO-020", area: "Calidad", responsable: "Auditor Líder", version: "1.0" },
+            { clausula: "9.2.2", requisito: "Planificación auditoría", documento: "Informe de Auditoría Interna", tipo: "Formato", codigo: "SGC-FO-021", area: "Calidad", responsable: "Auditor Líder", version: "1.0" },
+            { clausula: "9.3", requisito: "Revisión por la dirección", documento: "Procedimiento Revisión Dirección", tipo: "Procedimiento", codigo: "SGC-PR-022", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+            { clausula: "9.3.2", requisito: "Entradas revisión", documento: "Formato Entradas Revisión", tipo: "Formato", codigo: "SGC-FO-022", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "9.3.3", requisito: "Salidas revisión", documento: "Informe de Revisión por la Dirección", tipo: "Registro", codigo: "SGC-RG-018", area: "Dirección", responsable: "Dir. General", version: "1.0" },
+
+            // Cláusula 10 - Mejora
+            { clausula: "10.1", requisito: "Generalidades mejora", documento: "Procedimiento de Mejora Continua", tipo: "Procedimiento", codigo: "SGC-PR-023", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "10.2", requisito: "No conformidad", documento: "Formato de Reporte de No Conformidad", tipo: "Formato", codigo: "SGC-FO-023", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "10.2", requisito: "Acción correctiva", documento: "Procedimiento Acciones Correctivas", tipo: "Procedimiento", codigo: "SGC-PR-024", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "10.2", requisito: "Acción correctiva", documento: "Formato de Acción Correctiva", tipo: "Formato", codigo: "SGC-FO-024", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "10.2.2", requisito: "Información documentada", documento: "Registro de Acciones Correctivas", tipo: "Registro", codigo: "SGC-RG-019", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "10.3", requisito: "Mejora continua", documento: "Programa de Mejora Continua", tipo: "Programa", codigo: "SGC-PG-003", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "10.3", requisito: "Mejora continua", documento: "Registro de Oportunidades de Mejora", tipo: "Registro", codigo: "SGC-RG-020", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+
+            // Documentos Adicionales
+            { clausula: "7.1.5", requisito: "Monitoreo y Medición", documento: "Instructivo Uso de Equipos de Medición", tipo: "Instructivo", codigo: "SGC-IN-003", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "8.5.1", requisito: "Control producción", documento: "Instructivo de Seguridad Industrial", tipo: "Instructivo", codigo: "SGC-IN-004", area: "Operaciones", responsable: "Jefe Seg.", version: "1.0" },
+            { clausula: "8.2.1", requisito: "Comunicación cliente", documento: "Formato de Quejas y Reclamos", tipo: "Formato", codigo: "SGC-FO-025", area: "Comercial", responsable: "Jefe Comercial", version: "1.0" },
+            { clausula: "7.5.3", requisito: "Control información", documento: "Formato de Distribución de Documentos", tipo: "Formato", codigo: "SGC-FO-026", area: "Calidad", responsable: "Coord. Calidad", version: "1.0" },
+            { clausula: "8.4.1", requisito: "Evaluación proveedores", documento: "Registro de Proveedores Aprobados", tipo: "Registro", codigo: "SGC-RG-021", area: "Compras", responsable: "Jefe Compras", version: "1.0" },
+            { clausula: "7.2", requisito: "Competencia", documento: "Formato de Evaluación de Desempeño", tipo: "Formato", codigo: "SGC-FO-027", area: "Operaciones", responsable: "Jefe RRHH", version: "1.0" },
+            { clausula: "7.2", requisito: "Competencia", documento: "Formato de Descripción de Puesto", tipo: "Formato", codigo: "SGC-FO-028", area: "Operaciones", responsable: "Jefe RRHH", version: "1.0" },
+            { clausula: "8.6", requisito: "Liberación productos", documento: "Formato de Certificado de Calidad", tipo: "Formato", codigo: "SGC-FO-029", area: "Calidad", responsable: "Dir. Calidad", version: "1.0" },
+            { clausula: "8.5.2", requisito: "Identificación trazabilidad", documento: "Formato de Etiqueta de Identificación", tipo: "Formato", codigo: "SGC-FO-030", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+            { clausula: "8.1", requisito: "Planificación operacional", documento: "Formato de Reporte Diario de Obra", tipo: "Formato", codigo: "SGC-FO-031", area: "Operaciones", responsable: "Jefe Prod.", version: "1.0" },
+        ];
+
+        // Cargar la tabla al iniciar
+        document.addEventListener('DOMContentLoaded', function () {
+            renderTable(documentosISO);
+        });
+
+        // Renderizar tabla
+        function renderTable(data) {
+            const tbody = document.getElementById('matrizBody');
+            tbody.innerHTML = '';
+
+            data.forEach(doc => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${doc.clausula}</strong></td>
+                    <td>${doc.requisito}</td>
+                    <td>${doc.documento}</td>
+                    <td><span class="tipo-badge tipo-${doc.tipo.toLowerCase()}">${doc.tipo}</span></td>
+                    <td><code>${doc.codigo}</code></td>
+                    <td>${doc.area}</td>
+                    <td>${doc.responsable}</td>
+                    <td>${doc.version}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('resultsCount').textContent = data.length;
+        }
+
+        // Filtrar tabla
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const clausulaFilter = document.getElementById('filterClausula').value;
+            const tipoFilter = document.getElementById('filterTipo').value;
+            const areaFilter = document.getElementById('filterArea').value;
+
+            let filtered = documentosISO.filter(doc => {
+                const matchSearch = !searchTerm ||
+                    doc.documento.toLowerCase().includes(searchTerm) ||
+                    doc.codigo.toLowerCase().includes(searchTerm) ||
+                    doc.requisito.toLowerCase().includes(searchTerm) ||
+                    doc.clausula.includes(searchTerm);
+
+                const matchClausula = !clausulaFilter || doc.clausula.startsWith(clausulaFilter);
+                const matchTipo = !tipoFilter || doc.tipo === tipoFilter;
+                const matchArea = !areaFilter || doc.area === areaFilter;
+
+                return matchSearch && matchClausula && matchTipo && matchArea;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Agregar versión
+        function addVersionRow() {
+            const table = document.querySelector('.version-table tbody');
+            const rowCount = table.rows.length + 1;
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${rowCount}.0</td>
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="Descripción de la modificación"></td>
+                <td><input type="text" placeholder="Responsable"></td>
+            `;
+        }
+
+        // Exportar a Excel (CSV)
+        function exportToExcel() {
+            let csv = 'Cláusula,Requisito,Documento,Tipo,Código,Área,Responsable,Versión\n';
+            documentosISO.forEach(doc => {
+                csv += `"${doc.clausula}","${doc.requisito}","${doc.documento}","${doc.tipo}","${doc.codigo}","${doc.area}","${doc.responsable}","${doc.version}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Matriz_ISO_9001_MICSA.csv';
+            link.click();
+        }
+    </script>
+</body>
+
+</html>

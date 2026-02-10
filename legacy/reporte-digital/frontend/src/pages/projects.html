@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Gestión de Proyectos</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+
+    <style>
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid var(--card-border);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 15px;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .status-paused {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        /* Personnel Selection Styles */
+        .personnel-selection {
+            margin-top: 20px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 15px;
+        }
+
+        .personnel-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .personnel-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid var(--card-border);
+            cursor: pointer;
+        }
+
+        .personnel-item:last-child {
+            border-bottom: none;
+        }
+
+        .personnel-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .personnel-item input {
+            cursor: pointer;
+        }
+
+        .personnel-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Volver al Dashboard</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">🏗️</span>
+                    <span class="logo-text">MICSA</span>
+                </div>
+                <p class="logo-subtitle">Administración</p>
+            </div>
+            <div class="header-info">
+                <h1>GESTIÓN DE PROYECTOS</h1>
+                <p>Lista Oficial de Obras y Servicios</p>
+            </div>
+        </header>
+
+        <div class="projects-header" style="margin-top: 40px;">
+            <h2 style="color: var(--text-primary);">Proyectos en Curso</h2>
+            <button class="btn btn-primary" onclick="openModal()">+ Nuevo Proyecto</button>
+        </div>
+
+        <div class="search-bar">
+            <div style="color: var(--text-muted); margin-right: 10px;">🔍</div>
+            <input type="text" id="projectSearch" class="search-input"
+                placeholder="Buscar por nombre, cliente o descripción..." oninput="filterProjects()">
+            <select id="statusFilter" class="btn btn-secondary"
+                style="padding: 10px; border: 1px solid var(--card-border);" onchange="filterProjects()">
+                <option value="all">Todos los Estados</option>
+                <option value="active">Activo</option>
+                <option value="completed">Completado</option>
+                <option value="paused">Pausado</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table id="projectsTable">
+                <thead>
+                    <tr>
+                        <th>Proyecto</th>
+                        <th>Cliente</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="projectsBody">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA Soluciones Industriales | Control de Proyectos Digital</p>
+        </footer>
+    </div>
+
+    <!-- Modal para Crear/Editar Proyecto -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nuevo Proyecto</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="projectForm">
+                <input type="hidden" id="editProjectId">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Nombre del Proyecto:</label>
+                        <input type="text" id="projectName" required placeholder="Ej: Planta Ironcast - Fase 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Cliente:</label>
+                        <input type="text" id="projectClient" placeholder="Ej: Ironcast S.A. de C.V.">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado:</label>
+                        <select id="projectStatus" required>
+                            <option value="active">Activo</option>
+                            <option value="completed">Completado</option>
+                            <option value="paused">Pausado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Descripción / Alcance:</label>
+                    <textarea id="projectDescription" rows="4"
+                        style="width: 100%; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text-primary); padding: 10px; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+
+                <!-- Nueva sección para asignar personal -->
+                <div class="personnel-selection">
+                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                        Asignar Personal al Proyecto:
+                        <input type="text" id="employeeSearch" placeholder="Filtrar empleados..."
+                            style="font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; width: 150px;">
+                    </label>
+                    <div class="personnel-list" id="personnelList">
+                        <!-- Cargando empleados... -->
+                    </div>
+                </div>
+
+                <div class="form-actions"
+                    style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Proyecto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/projects.js"></script>
+</body>
+
+</html>

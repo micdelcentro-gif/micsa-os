@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Gestión de Usuarios</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+
+    <style>
+        .users-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid var(--card-border);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 15px;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-color);
+        }
+
+        /* Context menus / table actions */
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Volver al Dashboard</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">👥</span>
+                    <span class="logo-text">MICSA</span>
+                </div>
+                <p class="logo-subtitle">Administración</p>
+            </div>
+            <div class="header-info">
+                <h1>GESTIÓN DE USUARIOS</h1>
+                <p>Control de Acceso y Permisos Granulares</p>
+            </div>
+        </header>
+
+        <div class="users-header" style="margin-top: 40px;">
+            <h2 style="color: var(--text-primary);">Usuarios del Sistema</h2>
+            <button class="btn btn-primary" onclick="openModal()">+ Nuevo Usuario</button>
+        </div>
+
+        <div class="search-bar">
+            <div style="color: var(--text-muted); margin-right: 10px;">🔍</div>
+            <input type="text" id="userSearch" class="search-input" placeholder="Buscar por usuario, rol o proyecto..."
+                oninput="filterUsers()">
+            <select id="roleFilter" class="btn btn-secondary"
+                style="padding: 10px; border: 1px solid var(--card-border);" onchange="filterUsers()">
+                <option value="all">Todos los Roles</option>
+                <option value="super_admin">Super Admin</option>
+                <option value="administrativo">Administrativo</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="viewer">Visualizador</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario / Login</th>
+                        <th>Rol</th>
+                        <th>Proyecto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usersBody">
+                    <!-- Los usuarios se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA Soluciones Industriales | Panel Administrativo de Seguridad</p>
+        </footer>
+    </div>
+
+    <!-- Modal para Crear/Editar Usuario -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nuevo Usuario</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="userForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre de Usuario (Login):</label>
+                        <input type="text" id="username" required placeholder="Ej: jgonzalez">
+                    </div>
+                    <div class="form-group" id="passwordGroup">
+                        <label id="passwordLabel">Contraseña:</label>
+                        <input type="password" id="password" autocomplete="new-password">
+                        <small id="passwordNote" style="color: var(--text-muted); display: none;">Dejar vacío para
+                            mantener la actual</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Rol Sugerido:</label>
+                        <select id="role" onchange="applyRolePreset()" required>
+                            <option value="">Seleccionar rol...</option>
+                            <option value="super_admin">Super Administrador</option>
+                            <option value="administrativo">Administrativo</option>
+                            <option value="supervisor">Supervisor de Obra</option>
+                            <option value="viewer">Solo Lectura</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Proyecto Asignado:</label>
+                        <select id="assigned_project">
+                            <option value="">Sin proyecto asignado</option>
+                            <!-- Dinámico -->
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label><strong>Permisos Granulares:</strong></label>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                            onclick="selectAllPermissions(true)">Check todos</button>
+                    </div>
+                    <div id="permissionsList" class="permissions-grid">
+                        <!-- Checkboxes dinámicos cargados desde el sistema de permisos -->
+                    </div>
+                </div>
+
+                <div class="form-actions"
+                    style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/users.js"></script>
+</body>
+
+</html>

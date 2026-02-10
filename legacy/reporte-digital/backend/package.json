@@ -1,0 +1,27 @@
+{
+  "name": "micsa-reporte-digital",
+  "version": "1.6.0",
+  "description": "Sistema de Reporte Diario de Obra - MICSA",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "MICSA",
+  "license": "ISC",
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11",
+    "sqlite3": "^5.1.7"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "axios": "^1.13.4",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "uuid": "^13.0.0",
+    "xml2js": "^0.6.2"
+  }
+}

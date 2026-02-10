@@ -1,0 +1,33 @@
+[33m[nodemon] 3.1.11[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node index.js`[39m
+🚀 Servidor MICSA corriendo en http://localhost:3000
+📦 Conectado a la base de datos SQLite
+✅ Usuario admin por defecto creado (admin/admin123)
+Error detallado Sicofi: {
+  mensaje: 'Es necesario ingresar las credenciales para solicitar tu token.',
+  codigoError: '401'
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node index.js`[39m
+🚀 Servidor MICSA corriendo en http://localhost:3000
+📦 Conectado a la base de datos SQLite
+✅ Usuario admin por defecto creado (admin/admin123)
+Error detallado Sicofi: {
+  mensaje: 'Es necesario ingresar las credenciales para solicitar tu token.',
+  codigoError: '401'
+}
+Error detallado Sicofi: {
+  mensaje: 'Es necesario ingresar las credenciales para solicitar tu token.',
+  codigoError: '401'
+}
+Error detallado Sicofi: {
+  mensaje: 'Es necesario ingresar las credenciales para solicitar tu token.',
+  codigoError: '401'
+}
+Error detallado Sicofi: {
+  mensaje: 'Es necesario ingresar las credenciales para solicitar tu token.',
+  codigoError: '401'
+}

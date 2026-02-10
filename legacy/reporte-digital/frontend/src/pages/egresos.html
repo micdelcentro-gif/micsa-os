@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Control de Egresos</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .expense-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .expense-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .expense-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--card-border);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .expense-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Herramientas Contador</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">💸</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Control de Gastos y Compras</p>
+            </div>
+            <div class="header-info">
+                <h1>CONTROL DE EGRESOS</h1>
+                <p>Análisis de Gastos Operativos y Facturación de Proveedores</p>
+            </div>
+        </header>
+
+        <div class="expense-kpi-grid">
+            <div class="stat-box" style="border-top: 4px solid var(--rojo-micsa);">
+                <div class="number" id="totalExpenses">$0.00</div>
+                <div class="label">Egresos Totales (Mes)</div>
+            </div>
+            <div class="stat-box" style="border-top: 4px solid var(--accent-color);">
+                <div class="number" id="expenseCount">0</div>
+                <div class="label">Pólizas de Gasto</div>
+            </div>
+            <div class="stat-box" style="border-top: 4px solid var(--amarillo-micsa);">
+                <div class="number" id="taxCredit">$0.00</div>
+                <div class="label">IVA Acreditable (Recuperable)</div>
+            </div>
+        </div>
+
+        <div class="repse-kpi-card" style="margin-top: 30px; text-align: left;">
+            <div class="report-section-title">Análisis por Categoría de Gasto</div>
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>Categoría de Cuenta</th>
+                        <th style="text-align: right;">Cargos (Gasto)</th>
+                        <th style="text-align: right;">IVA</th>
+                        <th style="text-align: right;">Monto Total</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseBody">
+                    <!-- JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Expense Intelligence Hub</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadExpenses);
+
+        async function loadExpenses() {
+            try {
+                const now = new Date();
+                const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+                const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+                const res = await fetch(`/api/accounting/reports/pnl?start=${start}&end=${end}`);
+                const data = await res.json();
+
+                const tbody = document.getElementById('expenseBody');
+                tbody.innerHTML = '';
+
+                let total = 0;
+                let ivaTotal = 0;
+
+                const expenseRows = data.filter(r => r.type === 'EGRESO');
+
+                if (expenseRows.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-muted);">No se detectaron egresos en el periodo actual.</td></tr>';
+                    return;
+                }
+
+                expenseRows.forEach(row => {
+                    const balance = Math.abs(row.balance);
+                    const iva = balance * 0.16;
+                    const full = balance + iva;
+                    total += full;
+                    ivaTotal += iva;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${row.name}</strong></td>
+                        <td style="text-align: right;">${formatCurrency(balance)}</td>
+                        <td style="text-align: right;">${formatCurrency(iva)}</td>
+                        <td style="text-align: right; font-weight: 600;">${formatCurrency(full)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('totalExpenses').textContent = formatCurrency(total);
+                document.getElementById('expenseCount').textContent = expenseRows.length;
+                document.getElementById('taxCredit').textContent = formatCurrency(ivaTotal);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+    </script>
+</body>
+
+</html>

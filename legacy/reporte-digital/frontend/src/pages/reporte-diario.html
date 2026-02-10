@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- ============================================
+         MICSA - REPORTE DIARIO DE OBRA DIGITAL
+         ============================================
+         Este formulario digitaliza el Reporte Diario de Obra de MICSA
+         conforme a la Especificación Técnica 45766.
+         
+         ESTRUCTURA DEL DOCUMENTO (11 SECCIONES):
+         1. Datos Generales del Reporte - Fecha, turno, supervisores
+         2. Personal en Sitio - Tabla dinámica de trabajadores
+         3. Actividades Ejecutadas - Conforme a Gantt del proyecto
+         4. Materiales y Recursos - Consumibles utilizados
+         5. Avance del Proyecto - Planeado vs Real
+         6. Ruta Crítica - Control de tiempos
+         7. Seguridad y Cumplimiento HSE - EPP, LOTO, incidentes
+         8. Incidencias/Observaciones - Técnicas, producción, cliente
+         9. Evidencia Fotográfica - 6 campos para fotos
+         10. Checklist de Calidad - Verificación pre-envío
+         11. Cierre Técnico - Firmas de supervisores
+         
+         FUNCIONALIDADES:
+         - Agregar filas dinámicamente a tablas
+         - Previsualizar imágenes antes de guardar
+         - Guardar borrador en localStorage (auto cada 2 min)
+         - Generar PDF para impresión
+         - Validación de campos requeridos
+         
+         ARCHIVOS RELACIONADOS:
+         - styles.css: Estilos visuales del formulario
+         - script.js: Lógica interactiva y funcionalidad
+         
+         CÓDIGO DEL DOCUMENTO: SGC-FO-031 (Matriz ISO 9001:2015)
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Reporte Diario de Obra Digital</title>
+
+    <!-- Estilos CSS principales del sistema -->
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <!-- Google Fonts: Inter para tipografía moderna y legible -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+
+    <!-- PDF.js para extracción de datos de reportes existentes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Configuración necesaria para PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <form id="reporteForm">
+            <input type="hidden" id="reportId">
+            <!-- Header -->
+            <header class="header">
+                <div class="logo-section">
+                    <div class="logo">
+                        <span class="logo-icon">🏗️</span>
+                        <span class="logo-text">MICSA</span>
+                    </div>
+                    <p class="logo-subtitle">Fabricación y Montaje Industrial</p>
+                </div>
+                <div class="header-info">
+                    <h1>REPORTE DIARIO DE OBRA</h1>
+                    <div style="margin-bottom: 10px;" class="no-print">
+                        <a href="../../index.html" class="btn btn-secondary"
+                            style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none;">🏠 Ir al Dashboard</a>
+                    </div>
+                    <p>Proyecto: <select id="nombreProyecto" class="header-input"></select></p>
+                    <div class="doc-info">
+                        <span>Espec. Técnica: <input type="text" id="especificacionNo" class="inline-input"
+                                value="45766"></span>
+                        <span>Reporte No.: <input type="text" id="reporteNo" class="inline-input"
+                                placeholder="AUTO"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Sección 1: Datos Generales del Reporte -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">1</span>
+                    <h2>DATOS GENERALES DEL REPORTE</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label>Fecha del Reporte:</label>
+                        <input type="date" id="fechaReporte" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Semana de Proyecto:</label>
+                        <input type="text" id="semanaProyecto" placeholder="[SEMANA #]">
+                    </div>
+                    <div class="form-row">
+                        <label>Turno:</label>
+                        <select id="turno">
+                            <option value="">Seleccionar...</option>
+                            <option value="PRIMERO">PRIMERO</option>
+                            <option value="SEGUNDO">SEGUNDO</option>
+                            <option value="TERCERO">TERCERO</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Supervisor MICSA:</label>
+                        <input type="text" id="supervisorMicsa" placeholder="[NOMBRE SUPERVISOR]">
+                    </div>
+                    <div class="form-row">
+                        <label>Cliente:</label>
+                        <input type="text" id="nombreCliente" placeholder="[NOMBRE DEL CLIENTE]"
+                            oninput="updateClientLabels(this.value)">
+                    </div>
+                    <div class="form-row">
+                        <label>Ubicación Planta / Sitio:</label>
+                        <input type="text" id="ubicacionPlanta" placeholder="[UBICACIÓN FÍSICA / SITIO DE TRABAJO]">
+                    </div>
+                    <div class="form-row">
+                        <label>Supervisor Cliente:</label>
+                        <input type="text" id="supervisorCliente" placeholder="[NOMBRE SUPERVISOR]">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 2: Personal en Sitio -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">2</span>
+                    <h2>PERSONAL EN SITIO</h2>
+                </div>
+                <div class="table-container">
+                    <table id="personalTable">
+                        <thead>
+                            <tr>
+                                <th>Nombre del Trabajador</th>
+                                <th>Puesto / Categoría</th>
+                                <th>Hora Entrada</th>
+                                <th>Hora Salida</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE APELLIDO]"></td>
+                                <td><input type="text" placeholder="[PUESTO]"></td>
+                                <td><input type="time"></td>
+                                <td><input type="time"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE APELLIDO]"></td>
+                                <td><input type="text" placeholder="[PUESTO]"></td>
+                                <td><input type="time"></td>
+                                <td><input type="time"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE APELLIDO]"></td>
+                                <td><input type="text" placeholder="[PUESTO]"></td>
+                                <td><input type="time"></td>
+                                <td><input type="time"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE APELLIDO]"></td>
+                                <td><input type="text" placeholder="[PUESTO]"></td>
+                                <td><input type="time"></td>
+                                <td><input type="time"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-row-btn" onclick="addPersonalRow()">+ Agregar Trabajador</button>
+                </div>
+            </section>
+
+            <!-- Sección 3: Actividades Ejecutadas -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">3</span>
+                    <h2>ACTIVIDADES EJECUTADAS (CONFORME A GANTT)</h2>
+                </div>
+                <div class="table-container">
+                    <table id="actividadesTable">
+                        <thead>
+                            <tr>
+                                <th>Fase Gantt</th>
+                                <th>Descripción de Actividad Ejecutada</th>
+                                <th>Semana Gantt</th>
+                                <th>Avance Día %</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="[FASE]"></td>
+                                <td><input type="text" placeholder="[DESCRIPCIÓN TÉCNICA DETALLADA DE LA ACTIVIDAD]"
+                                        class="wide-input"></td>
+                                <td><input type="text" placeholder="[SEM]"></td>
+                                <td><input type="number" placeholder="%" min="0" max="100"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="[FASE]"></td>
+                                <td><input type="text" placeholder="[DESCRIPCIÓN TÉCNICA DETALLADA DE LA ACTIVIDAD]"
+                                        class="wide-input"></td>
+                                <td><input type="text" placeholder="[SEM]"></td>
+                                <td><input type="number" placeholder="%" min="0" max="100"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-row-btn" onclick="addActividadRow()">+ Agregar Actividad</button>
+                </div>
+                <div class="form-group full-width">
+                    <label>DESCRIPCIÓN NARRATIVA DE ACTIVIDADES:</label>
+                    <textarea id="descripcionNarrativa" rows="4"
+                        placeholder="[REDACTAR EN FORMA TÉCNICA Y DETALLADA LAS ACTIVIDADES EJECUTADAS DURANTE EL TURNO]"></textarea>
+                </div>
+            </section>
+
+            <!-- Sección 4: Materiales y Recursos Utilizados -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">4</span>
+                    <h2>MATERIALES Y RECURSOS UTILIZADOS</h2>
+                </div>
+                <div class="table-container">
+                    <table id="materialesTable">
+                        <thead>
+                            <tr>
+                                <th>Material / Recurso</th>
+                                <th>Cantidad</th>
+                                <th>Unidad</th>
+                                <th>Observaciones</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE DEL MATERIAL]"></td>
+                                <td><input type="number" placeholder="[CANT]"></td>
+                                <td><input type="text" placeholder="[U]"></td>
+                                <td><input type="text" placeholder="[OBSERVACIONES]"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="[NOMBRE DEL MATERIAL]"></td>
+                                <td><input type="number" placeholder="[CANT]"></td>
+                                <td><input type="text" placeholder="[U]"></td>
+                                <td><input type="text" placeholder="[OBSERVACIONES]"></td>
+                                <td><button type="button" class="btn-delete" onclick="removeRow(this)"
+                                        title="Eliminar fila">×</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-row-btn" onclick="addMaterialRow()">+ Agregar Material</button>
+                </div>
+            </section>
+
+            <!-- Sección 5: Avance del Proyecto -->
+            <section class="form-section dual-section">
+                <div class="dual-left">
+                    <div class="section-header">
+                        <span class="section-number">5</span>
+                        <h2>AVANCE DEL PROYECTO</h2>
+                    </div>
+                    <div class="form-grid compact">
+                        <div class="form-row">
+                            <label>Avance Planeado Acum.:</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="avancePlaneado" placeholder="[VALOR]" min="0" max="100">
+                                <span>%</span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label>Avance Real Acum.:</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="avanceReal" placeholder="[VALOR]" min="0" max="100">
+                                <span>%</span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label>Estatus / Variación:</label>
+                            <select id="estatusVariacion">
+                                <option value="">Seleccionar...</option>
+                                <option value="ADELANTADO">ADELANTADO</option>
+                                <option value="EN TIEMPO">EN TIEMPO</option>
+                                <option value="ATRASADO">ATRASADO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="dual-right">
+                    <div class="section-header ruta-critica">
+                        <span class="section-number">6</span>
+                        <h2>RUTA CRÍTICA</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>Ruta Crítica Actual:</label>
+                        <input type="text" id="rutaCritica" placeholder="[DESCRIBIR RUTA]">
+                    </div>
+                    <div class="form-group">
+                        <label>Afectación:</label>
+                        <select id="afectacion">
+                            <option value="">Seleccionar...</option>
+                            <option value="SÍ">SÍ</option>
+                            <option value="NO">NO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Acción Correctiva:</label>
+                        <input type="text" id="accionCorrectiva" placeholder="[N/A o ACCIÓN]">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 7: Seguridad y Cumplimiento HSE -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">7</span>
+                    <h2>SEGURIDAD Y CUMPLIMIENTO (HSE)</h2>
+                </div>
+                <div class="hse-grid">
+                    <div class="hse-item">
+                        <label>Uso EPP Completo</label>
+                        <div class="toggle-group">
+                            <label class="toggle-option">
+                                <input type="radio" name="epp" value="si" checked>
+                                <span class="toggle-label yes">✓ SÍ</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="radio" name="epp" value="no">
+                                <span class="toggle-label no">✗ NO</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="hse-item">
+                        <label>Aplicación LOTO</label>
+                        <div class="toggle-group">
+                            <label class="toggle-option">
+                                <input type="radio" name="loto" value="si" checked>
+                                <span class="toggle-label yes">✓ SÍ</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="radio" name="loto" value="no">
+                                <span class="toggle-label no">✗ NO</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="hse-item">
+                        <label>Actos Inseguros</label>
+                        <div class="toggle-group">
+                            <label class="toggle-option">
+                                <input type="radio" name="actosInseguros" value="si">
+                                <span class="toggle-label no">✓ SÍ</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="radio" name="actosInseguros" value="no" checked>
+                                <span class="toggle-label yes">✗ NO</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="hse-item">
+                        <label>Tarjetas Verdes</label>
+                        <input type="number" id="tarjetasVerdes" placeholder="N/A" min="0">
+                    </div>
+                    <div class="hse-item">
+                        <label>Incidentes</label>
+                        <div class="toggle-group">
+                            <label class="toggle-option">
+                                <input type="radio" name="incidentes" value="si">
+                                <span class="toggle-label no">✓ SÍ</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="radio" name="incidentes" value="no" checked>
+                                <span class="toggle-label yes">✗ NO</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label>Reporte HSE Detallado:</label>
+                    <textarea id="reporteHSE" rows="3"
+                        placeholder="[DESCRIPCIÓN DE EVENTOS O CONFIRMACIÓN DE CERO ACCIDENTES]"></textarea>
+                </div>
+            </section>
+
+            <!-- Sección 8: Incidencias / Observaciones / Cambios -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">8</span>
+                    <h2>INCIDENCIAS / OBSERVACIONES / CAMBIOS</h2>
+                </div>
+                <div class="incidencias-grid">
+                    <div class="form-group">
+                        <label class="label-highlight">INCIDENCIAS TÉCNICAS:</label>
+                        <textarea id="incidenciasTecnicas" rows="3"
+                            placeholder='[REGISTRAR HECHOS REALES O "SIN INCIDENCIAS TÉCNICAS QUE REPORTAR"]'></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-highlight">INCIDENCIAS DE PRODUCCIÓN / LOGÍSTICA:</label>
+                        <textarea id="incidenciasProduccion" rows="3"
+                            placeholder='[REGISTRAR RETRASOS O "SIN INCIDENCIAS DE PRODUCCIÓN"]'></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-highlight">CAMBIOS SOLICITADOS POR CLIENTE:</label>
+                        <textarea id="cambiosCliente" rows="3"
+                            placeholder='[REGISTRAR SOLICITUDES O "NINGÚN CAMBIO SOLICITADO"]'></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección 9: Evidencia Fotográfica -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">9</span>
+                    <h2>EVIDENCIA FOTOGRÁFICA</h2>
+                </div>
+                <p class="section-note">Se anexa al presente reporte digital el registro fotográfico correspondiente al
+                    día: <strong id="fechaFotografica">[FECHA]</strong></p>
+                <div class="photo-grid">
+                    <div class="photo-upload" onclick="document.getElementById('foto1').click()">
+                        <input type="file" id="foto1" accept="image/*" hidden onchange="previewImage(this, 'preview1')">
+                        <div class="photo-preview" id="preview1">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 1: CONDICIÓN INICIAL</label>
+                    </div>
+                    <div class="photo-upload" onclick="document.getElementById('foto2').click()">
+                        <input type="file" id="foto2" accept="image/*" hidden onchange="previewImage(this, 'preview2')">
+                        <div class="photo-preview" id="preview2">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 2: EJECUCIÓN ACTIVIDAD</label>
+                    </div>
+                    <div class="photo-upload" onclick="document.getElementById('foto3').click()">
+                        <input type="file" id="foto3" accept="image/*" hidden onchange="previewImage(this, 'preview3')">
+                        <div class="photo-preview" id="preview3">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 3: AVANCE GENERAL</label>
+                    </div>
+                    <div class="photo-upload" onclick="document.getElementById('foto4').click()">
+                        <input type="file" id="foto4" accept="image/*" hidden onchange="previewImage(this, 'preview4')">
+                        <div class="photo-preview" id="preview4">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 4: DETALLE TÉCNICO</label>
+                    </div>
+                    <div class="photo-upload" onclick="document.getElementById('foto5').click()">
+                        <input type="file" id="foto5" accept="image/*" hidden onchange="previewImage(this, 'preview5')">
+                        <div class="photo-preview" id="preview5">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 5: SEGURIDAD / EPP</label>
+                    </div>
+                    <div class="photo-upload" onclick="document.getElementById('foto6').click()">
+                        <input type="file" id="foto6" accept="image/*" hidden onchange="previewImage(this, 'preview6')">
+                        <div class="photo-preview" id="preview6">
+                            <span class="camera-icon">📷</span>
+                            <span>Clic para subir</span>
+                        </div>
+                        <label>FOTO 6: CONDICIÓN FINAL</label>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label>NOTAS SOBRE EVIDENCIA FOTOGRÁFICA:</label>
+                    <textarea id="notasFotos" rows="2" placeholder="[DESCRIBIR BREVEMENTE CADA FOTOGRAFÍA]"></textarea>
+                </div>
+            </section>
+
+            <!-- Sección 10: Checklist de Calidad y Verificación -->
+            <section class="form-section">
+                <div class="section-header">
+                    <span class="section-number">10</span>
+                    <h2>CHECKLIST DE CALIDAD Y VERIFICACIÓN</h2>
+                </div>
+                <p class="subsection-title">✓ VERIFICACIÓN PRE-ENVÍO DEL REPORTE</p>
+                <div class="checklist-grid">
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkGral">
+                        <span>Todos los datos generales están completos y son correctos</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkPersonal">
+                        <span>Lista de personal verificada con horas de entrada/salida</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkActividades">
+                        <span>Actividades descritas con detalle técnico suficiente</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkAvance">
+                        <span>Porcentajes de avance actualizados y verificados</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkHSE">
+                        <span>Cumplimiento / SE verificado y documentado</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkIncidencias">
+                        <span>Incidencias registradas</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkFotos">
+                        <span>Evidencia fotográfica anexada y descrita</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" id="chkFirmas">
+                        <span>Firmas de ambos supervisores obtenidas</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Sección 11: Cierre Técnico del Día -->
+            <section class="form-section cierre-section">
+                <div class="section-header cierre-header">
+                    <span class="section-number">11</span>
+                    <h2>CIERRE TÉCNICO DEL DÍA</h2>
+                </div>
+                <div class="cierre-content">
+                    <p>Se confirma que las actividades descritas fueron ejecutadas bajo los estándares de calidad de
+                        MICSA y conforme a los lineamientos de la Especificación Técnica <span
+                            id="displayEspecificacion">45766</span>.</p>
+                    <div class="firmas-grid">
+                        <div class="firma-box">
+                            <div class="firma-line"></div>
+                            <input type="text" id="nombreSupervisorMicsa" placeholder="[NOMBRE DEL SUPERVISOR]"
+                                class="firma-nombre">
+                            <span class="firma-cargo">SUPERVISOR MICSA</span>
+                        </div>
+                        <div class="firma-box">
+                            <div class="firma-line"></div>
+                            <input type="text" id="nombreSupervisorCliente" placeholder="[NOMBRE DEL SUPERVISOR]"
+                                class="firma-nombre">
+                            <span class="firma-cargo" id="labelFirmaCliente">SUPERVISOR DEL CLIENTE</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-logo">
+                    <p class="disclaimer">Este reporte cumple con la Especificación Técnica <span
+                            id="displayEspecificacionFooter">45766</span> y documentos vigentes obligatorios para
+                        facturción y mantenimiento del proyecto.<br>MICSA - Soluciones Industriales | Reporte Diario
+                        Automatizado v1.5.0</p>
+                    <div class="micsa-footer">
+                        <span class="logo-icon">🏗️</span>
+                        <span class="logo-text">MICSA</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Botones de Acción (Original - Visible solo en Desktop) -->
+            <div class="action-buttons no-print">
+                <button type="button" class="btn btn-secondary" onclick="guardarBorrador()">💾 Guardar Borrador</button>
+                <div style="position: relative; display: inline-block;">
+                    <button type="button" class="btn btn-info" onclick="document.getElementById('importPdf').click()"
+                        style="background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white;">📂 Importar
+                        PDF</button>
+                    <input type="file" id="importPdf" accept=".pdf" style="display: none;"
+                        onchange="handlePdfUpload(event)">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="generarPDF()">📄 Generar PDF</button>
+                <button type="button" class="btn btn-success" onclick="enviarReporte()">📧 Enviar Reporte</button>
+                <button type="button" class="btn btn-danger" onclick="limpiarFormulario()">🗑️ Limpiar
+                    Formulario</button>
+                <a href="../../index.html" class="btn btn-secondary"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center;">🏠
+                    Inicio</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- MENÚ FLOTANTE (FAB) PARA MÓVIL -->
+    <div class="fab-container" id="fabMenu">
+        <div class="fab-options">
+            <button class="fab-btn" onclick="guardarBorrador()">
+                <span>Guardar Borrador</span>
+                <div class="fab-btn-icon">💾</div>
+            </button>
+            <button class="fab-btn" onclick="document.getElementById('importPdf').click()">
+                <span>Importar PDF</span>
+                <div class="fab-btn-icon">📂</div>
+            </button>
+            <button class="fab-btn" onclick="generarPDF()">
+                <span>Generar PDF</span>
+                <div class="fab-btn-icon">📄</div>
+            </button>
+            <button class="fab-btn" onclick="enviarReporte()">
+                <span>Enviar Reporte</span>
+                <div class="fab-btn-icon">📧</div>
+            </button>
+            <a href="../../index.html" class="fab-btn">
+                <span>Inicio</span>
+                <div class="fab-btn-icon">🏠</div>
+            </a>
+            <button class="fab-btn" onclick="limpiarFormulario()">
+                <span>Limpiar</span>
+                <div class="fab-btn-icon" style="color: var(--danger-color); background: rgba(239, 68, 68, 0.1);">🗑️
+                </div>
+            </button>
+        </div>
+        <button class="fab-main" onclick="toggleFab()">
+            <span style="margin-top: -4px;">+</span>
+        </button>
+    </div>
+
+    <link rel="stylesheet" href="../mobile/mobile.css">
+    <script src="../mobile/mobile.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/pdf-logic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Dashboard de Ventas</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .sales-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .sales-chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .sales-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--card-border);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .sales-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Dashboard</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">💰</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Gestión Comercial y Ventas</p>
+            </div>
+            <div class="header-info">
+                <h1>CONTROL DE VENTAS (INGRESOS)</h1>
+                <p>Análisis de Facturación Emitida y Flujo de Ventas</p>
+            </div>
+        </header>
+
+        <div class="sales-kpi-grid">
+            <div class="stat-box" style="border-top: 4px solid var(--verde-micsa);">
+                <div class="number" id="totalSales">$0.00</div>
+                <div class="label">Ventas Totales (Mes)</div>
+            </div>
+            <div class="stat-box" style="border-top: 4px solid var(--accent-color);">
+                <div class="number" id="invoiceCount">0</div>
+                <div class="label">Facturas Emitidas</div>
+            </div>
+            <div class="stat-box" style="border-top: 4px solid var(--amarillo-micsa);">
+                <div class="number" id="pendingPayment">$0.00</div>
+                <div class="label">Por Cobrar (Estimado)</div>
+            </div>
+        </div>
+
+        <div class="sales-chart-card">
+            <div class="report-section-title">Detalle de Ingresos por Cliente</div>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>No. Facturas</th>
+                        <th style="text-align: right;">Total Subtotal</th>
+                        <th style="text-align: right;">IVA</th>
+                        <th style="text-align: right;">Total M.N.</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="salesBody">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Sales Intelligence</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadSales);
+
+        async function loadSales() {
+            try {
+                // Obtenemos el P&L para sacar los ingresos
+                const now = new Date();
+                const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+                const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+                const res = await fetch(`/api/accounting/reports/pnl?start=${start}&end=${end}`);
+                const data = await res.json();
+
+                const salesBody = document.getElementById('salesBody');
+                salesBody.innerHTML = '';
+
+                let total = 0;
+
+                // Filtramos por cuentas de ingreso (401...)
+                const incomeRows = data.filter(r => r.type === 'INGRESO');
+
+                if (incomeRows.length === 0) {
+                    salesBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No se detectaron ingresos en el periodo actual.</td></tr>';
+                    return;
+                }
+
+                incomeRows.forEach(row => {
+                    total += Math.abs(row.balance);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${row.name}</strong></td>
+                        <td>1</td>
+                        <td style="text-align: right;">${formatCurrency(Math.abs(row.balance / 1.16))}</td>
+                        <td style="text-align: right;">${formatCurrency(Math.abs(row.balance * 0.16 / 1.16))}</td>
+                        <td style="text-align: right; font-weight: 600;">${formatCurrency(Math.abs(row.balance))}</td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.7rem;" onclick="stampInvoice('${row.name}')">Timbrar</button>
+                        </td>
+                    `;
+                    salesBody.appendChild(tr);
+                });
+
+                document.getElementById('totalSales').textContent = formatCurrency(total);
+                document.getElementById('invoiceCount').textContent = incomeRows.length;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function stampInvoice(client) {
+            if (!confirm(`¿Deseas timbrar legalmente la factura para ${client}?`)) return;
+
+            try {
+                // Usamos un ID genérico o el ID real si lo tuviéramos
+                const res = await fetch('/api/accounting/reports/invoice/1/stamp', { method: 'POST' });
+                const data = await res.json();
+                alert(`✅ ${data.message}\nUUID: ${data.uuid}`);
+            } catch (err) {
+                alert('Error al timbrar');
+            }
+        }
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+    </script>
+</body>
+
+</html>

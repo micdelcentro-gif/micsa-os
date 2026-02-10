@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buzón de Archivos - MICSA OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+        }
+
+        .glass-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+
+<body class="p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <a href="/" class="text-sm text-primary hover:underline mb-2 block"><i class="fas fa-arrow-left"></i>
+                    Volver al Dashboard</a>
+                <h1 class="text-3xl font-bold text-slate-800">Buzón de Documentos (Inbox)</h1>
+                <p class="text-slate-500">Archivos detectados en la carpeta central listos para procesar.</p>
+            </div>
+            <button onclick="loadFiles()"
+                class="p-3 bg-white border rounded-full hover:bg-slate-50 transition-all shadow-sm">
+                <i class="fas fa-sync-alt text-primary"></i>
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="filesGrid">
+            <!-- Dinámico -->
+        </div>
+
+        <div id="noFiles" class="hidden text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+            <i class="fas fa-inbox text-5xl text-slate-200 mb-4"></i>
+            <p class="text-slate-400 font-medium">No se encontraron archivos nuevos en el buzón.</p>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        async function loadFiles() {
+            try {
+                const res = await fetch(`${API_URL}/inbox/files`);
+                const files = await res.json();
+                renderFiles(files);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderFiles(files) {
+            const grid = document.getElementById('filesGrid');
+            const noFiles = document.getElementById('noFiles');
+
+            grid.innerHTML = '';
+
+            if (files.length === 0) {
+                noFiles.classList.remove('hidden');
+                return;
+            }
+            noFiles.classList.add('hidden');
+
+            files.forEach(f => {
+                const isZip = f.name.toLowerCase().endsWith('.zip');
+                const isPdf = f.name.toLowerCase().endsWith('.pdf');
+                const isExcel = f.name.toLowerCase().endsWith('.xlsx');
+
+                const card = document.createElement('div');
+                card.className = 'glass-card p-6 flex flex-col justify-between hover:scale-[1.02] transition-all cursor-default';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
+                                ${getFileIcon(f)}
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <h3 class="font-bold text-slate-800 truncate" title="${f.name}">${f.name}</h3>
+                                <p class="text-xs text-slate-400">${(f.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-6">Detectado el ${new Date(f.mtime).toLocaleString()}</p>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        ${isZip ? `
+                            <button onclick="processZip('${f.name}')" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                                <i class="fas fa-magic"></i> Procesar
+                            </button>
+                        ` : ''}
+                        ${isPdf ? `
+                            <button class="flex-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold">Ver</button>
+                        ` : ''}
+                        <button class="p-2 bg-slate-50 text-slate-400 rounded-lg"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getFileIcon(f) {
+            if (f.isDir) return '📁';
+            if (f.name.toLowerCase().endsWith('.zip')) return '<i class="fas fa-file-archive text-orange-500"></i>';
+            if (f.name.toLowerCase().endsWith('.pdf')) return '<i class="fas fa-file-pdf text-red-500"></i>';
+            if (f.name.toLowerCase().endsWith('.xlsx')) return '<i class="fas fa-file-excel text-green-600"></i>';
+            return '<i class="fas fa-file text-slate-400"></i>';
+        }
+
+        async function processZip(filename) {
+            if (!confirm(`¿Deseas importar los comprobantes dentro de ${filename}?`)) return;
+
+            // Nota: El backend requiere que pasemos la ruta. 
+            // Para simplicidad en este demo, crearemos un endpoint que procese por nombre si está en INBOX.
+            alert('Extrayendo e importando nóminas... Por favor espera.');
+
+            try {
+                // Simulamos la llamada al importador que ahora sabe buscar en inbox
+                const res = await fetch(`${API_URL}/importer/import-from-inbox`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename })
+                });
+                const result = await res.json();
+                alert(`Resultado:\n${result.message}\nImportados: ${result.results.imported}\nNuevas entidades: ${result.results.entitiesCreated}`);
+                loadFiles();
+            } catch (err) {
+                alert('Error al procesar');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.checkAuth()) loadFiles();
+        });
+    </script>
+</body>
+
+</html>

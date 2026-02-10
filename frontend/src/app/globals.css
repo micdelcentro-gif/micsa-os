@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =============================================
+   ESTILOS DE IMPRESIÓN (@media print)
+   =============================================
+   Adaptados del código original para ahorro de tinta
+*/
+@media print {
+    @page {
+        size: letter;
+        margin: 0mm; /* Control total desde el body para evitar hojas blancas */
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body {
+        background: white !important;
+        color: #1a1a1a !important;
+        font-size: 11pt;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container, .max-w-5xl {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Permitir saltos de página naturales para aprovechar el espacio */
+    .form-section, .section-header, table, tr, .form-grid, .form-row, .form-group, .cierre-section, .card {
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+    }
+    
+    /* Forzar fondo blanco */
+    body, html, main, div {
+        background: white !important;
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    /* Reset de Cards para que parezcan secciones planas */
+    .form-section, .card, .border, .bg-slate-800\/50, .bg-white\/5 {
+        background: white !important;
+        background-color: white !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Encabezados de Sección */
+    .section-header, .card-header {
+        background: #f1f5f9 !important;
+        color: black !important;
+        padding: 8px 12px !important;
+        border-bottom: 3px solid #1e40af !important; /* Azul fuerte MICSA */
+    }
+    
+    h3, .card-title {
+        color: black !important;
+        font-weight: 700 !important;
+        font-size: 11pt !important;
+    }
+
+    /* Tablas estilo excel simple */
+    table {
+        width: 100% !important;
+        font-size: 9pt !important;
+        border-collapse: collapse !important;
+        margin-bottom: 15px !important;
+    }
+    
+    th {
+        background: #e2e8f0 !important; /* Gris muy claro */
+        color: black !important;
+        border: 1px solid #94a3b8 !important;
+        font-size: 8pt !important;
+        text-transform: uppercase !important;
+    }
+    
+    td {
+        border: 1px solid #cbd5e1 !important;
+        color: black !important;
+    }
+    
+    /* Inputs invisibles al imprimir, solo el texto */
+    input, select, textarea {
+        border: none !important;
+        border-bottom: 1px dashed #ccc !important;
+        background: transparent !important;
+        font-size: 10pt !important;
+        padding: 0 !important;
+        color: black !important;
+    }
+    
+    /* Header Principal MICSA */
+    .header {
+        display: flex !important;
+        border-bottom: 2px solid #333 !important;
+        margin-bottom: 20px !important;
+        padding-bottom: 10px !important;
+    }
+    
+    .logo-text {
+        color: #1e3a8a !important; /* Azul oscuro corporativo */
+        fill: #1e3a8a !important;
+    }
+    
+    /* Ocultar elementos de UI */
+    button, nav, aside, .hidden-print, .no-print, header {
+        display: none !important;
+    }
+}

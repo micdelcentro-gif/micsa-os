@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Fiscal - MICSA RH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        input,
+        select {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        input:focus {
+            border-color: #FF6600 !important;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body class="text-gray-100">
+
+    <nav class="bg-primary/90 backdrop-blur-md text-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="nomina.html" class="mr-4 text-gray-400 hover:text-white"><i class="fas fa-arrow-left"></i>
+                        Volver</a>
+                    <span class="font-bold text-xl">Configuración Fiscal</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <form id="configForm" class="space-y-8">
+            <!-- Datos de la Empresa -->
+            <div class="glass-card rounded-xl p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-building text-secondary"></i> Datos de la Empresa (Emisor)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Razón Social</label>
+                        <input type="text" name="business_name" class="w-full rounded-lg px-4 py-2"
+                            placeholder="Nombre legal">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">RFC</label>
+                        <input type="text" name="rfc" class="w-full rounded-lg px-4 py-2" placeholder="ABC123456XYZ">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Régimen Fiscal</label>
+                        <select name="regimen_fiscal" class="w-full rounded-lg px-4 py-2">
+                            <option value="601">601 - General de Ley Personas Morales</option>
+                            <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+                            <option value="626">626 - Régimen Simplificado de Confianza (RESICO)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Código Postal</label>
+                        <input type="text" name="cp" class="w-full rounded-lg px-4 py-2" placeholder="25700">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Registro Patronal</label>
+                        <input type="text" name="registro_patronal" class="w-full rounded-lg px-4 py-2"
+                            placeholder="A1234567890">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Constancia de Situación Fiscal (CSF) -->
+            <div class="glass-card rounded-xl p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-file-contract text-secondary"></i> Constancia de Situación Fiscal (CSF)
+                </h2>
+                <p class="text-sm text-gray-400 mb-6">Sube tu Constancia de Situación Fiscal actualizada para validar
+                    los datos de la empresa.</p>
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Archivo CSF (PDF)</label>
+                        <input type="file" id="csf_file" accept=".pdf" class="w-full text-sm">
+                    </div>
+                    <div id="csf_view" class="hidden">
+                        <a id="csf_link" href="#" target="_blank"
+                            class="px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-400/30 rounded-lg hover:bg-blue-600/40 transition-all flex items-center gap-2">
+                            <i class="fas fa-eye"></i> Ver Actual
+                        </a>
+                    </div>
+                    <button type="button" onclick="uploadCSF()"
+                        class="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-orange-600 transition-colors">
+                        Subir CSF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Certificados CSD -->
+            <div class="glass-card rounded-xl p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-key text-secondary"></i> Sello Digital (CSD)
+                </h2>
+                <p class="text-sm text-gray-400 mb-6">Sube tus archivos .cer y .key del SAT para habilitar el timbrado
+                    de nómina.</p>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Archivo .CER</label>
+                            <div id="cer_status" class="text-xs mb-2 text-green-400 hidden"><i class="fas fa-check"></i>
+                                Archivo cargado</div>
+                            <input type="file" id="cer_file" accept=".cer" class="w-full text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Archivo .KEY</label>
+                            <div id="key_status" class="text-xs mb-2 text-green-400 hidden"><i class="fas fa-check"></i>
+                                Archivo cargado</div>
+                            <input type="file" id="key_file" accept=".key" class="w-full text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Contraseña del CSD</label>
+                        <input type="password" id="csd_password" class="w-full rounded-lg px-4 py-2"
+                            placeholder="••••••••">
+                    </div>
+                    <button type="button" onclick="uploadCertificates()"
+                        class="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-orange-600 transition-colors">
+                        Actualizar Certificados
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuración del PAC -->
+            <div class="glass-card rounded-xl p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fas fa-cloud-upload-alt text-secondary"></i> Proveedor de Timbrado (PAC)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">PAC Usuario/API Key</label>
+                        <input type="text" name="pac_username" class="w-full rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">PAC Contraseña</label>
+                        <input type="password" name="pac_password" class="w-full rounded-lg px-4 py-2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="px-10 py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-all border border-blue-400/30">
+                    Guardar Todas las Configuraciones
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const form = document.getElementById('configForm');
+
+        async function loadConfig() {
+            try {
+                const response = await fetch(`${API_URL}/payroll/config`);
+                const config = await response.json();
+
+                // Llenar campos
+                Object.keys(config).forEach(key => {
+                    const input = form.elements[key];
+                    if (input) input.value = config[key] || '';
+                });
+
+                if (config.csd_cer_name) document.getElementById('cer_status').classList.remove('hidden');
+                if (config.csd_key_name) document.getElementById('key_status').classList.remove('hidden');
+
+                if (config.csf_path) {
+                    document.getElementById('csf_view').classList.remove('hidden');
+                    document.getElementById('csf_link').href = `${API_URL.replace('/api', '')}/uploads/certificates/${config.csf_path}`;
+                }
+            } catch (err) {
+                console.error('Error cargando config:', err);
+            }
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch(`${API_URL}/payroll/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) alert('Configuración guardada correctamente');
+            } catch (err) {
+                alert('Error al guardar');
+            }
+        };
+
+        async function uploadCertificates() {
+            const cer = document.getElementById('cer_file').files[0];
+            const key = document.getElementById('key_file').files[0];
+            const pass = document.getElementById('csd_password').value;
+
+            if (!cer && !key && !pass) return alert('Selecciona archivos o ingresa contraseña');
+
+            const fd = new FormData();
+            if (cer) fd.append('cer', cer);
+            if (key) fd.append('key', key);
+            fd.append('password', pass);
+
+            try {
+                const res = await fetch(`${API_URL}/payroll/certificates`, {
+                    method: 'POST',
+                    body: fd
+                });
+                if (res.ok) {
+                    alert('Certificados actualizados');
+                    loadConfig();
+                }
+            } catch (err) {
+                alert('Error subiendo certificados');
+            }
+        }
+
+
+        async function uploadCSF() {
+            const file = document.getElementById('csf_file').files[0];
+            if (!file) return alert('Selecciona un archivo PDF');
+
+            const fd = new FormData();
+            fd.append('csf', file);
+
+            try {
+                const res = await fetch(`${API_URL}/payroll/config/csf`, {
+                    method: 'POST',
+                    body: fd
+                });
+                if (res.ok) {
+                    alert('CSF subida correctamente');
+                    loadConfig();
+                }
+            } catch (err) {
+                alert('Error subiendo CSF');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.checkAuth()) loadConfig();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+.next/
+out/
+build/
+dist/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.python-version
+
+# IDEs
+.vscode/
+.idea/
+
+# Large Files & Binaries
+*.mp4
+*.mov
+*.xlsx
+*.pdf
+*.zip
+*.tar.gz
+inbox_documentos/
+temp/
+docs/binarios/
+
+# Database
+*.sqlite
+*.db

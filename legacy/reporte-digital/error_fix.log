@@ -1,0 +1,124 @@
+﻿node : C:\Users\alexi
+\OneDrive\Escritorio\
+Project Manager\MICSA
+-Reporte-Digital\back
+end\node_modules\path
+-to-regexp\dist\index
+.js:96
+En línea: 1 
+Carácter: 1
++ node 
+backend/index.js 2> 
+error.log; 
+Get-Content 
+error.log | Out-File 
+ ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (C:\User   
+ s\alexi\...ist\i    
+ndex.js:96:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+            throw 
+new 
+PathError(`Missing 
+parameter name at 
+index ${index}`, 
+str);
+            ^
+
+PathError 
+[TypeError]: Missing 
+parameter name at 
+index 7: /:path*; 
+visit https://git.new
+/pathToRegexpError 
+for info
+    at name (C:\Users
+\alexi\OneDrive\Escri
+torio\Project Manager
+\MICSA-Reporte-Digita
+l\backend\node_module
+s\path-to-regexp\dist
+\index.js:96:19)
+    at parse (C:\User
+s\alexi\OneDrive\Escr
+itorio\Project Manage
+r\MICSA-Reporte-Digit
+al\backend\node_modul
+es\path-to-regexp\dis
+t\index.js:113:68)
+    at pathToRegexp (
+C:\Users\alexi\OneDri
+ve\Escritorio\Project
+ Manager\MICSA-Report
+e-Digital\backend\nod
+e_modules\path-to-reg
+exp\dist\index.js:267
+:58)
+    at Object.match (
+C:\Users\alexi\OneDri
+ve\Escritorio\Project
+ Manager\MICSA-Report
+e-Digital\backend\nod
+e_modules\path-to-reg
+exp\dist\index.js:237
+:30)
+    at matcher (C:\Us
+ers\alexi\OneDrive\Es
+critorio\Project Mana
+ger\MICSA-Reporte-Dig
+ital\backend\node_mod
+ules\router\lib\layer
+.js:86:23)
+    at new Layer (C:\
+Users\alexi\OneDrive\
+Escritorio\Project Ma
+nager\MICSA-Reporte-D
+igital\backend\node_m
+odules\router\lib\lay
+er.js:93:62)
+    at 
+Function.route (C:\Us
+ers\alexi\OneDrive\Es
+critorio\Project Mana
+ger\MICSA-Reporte-Dig
+ital\backend\node_mod
+ules\router\index.js:
+428:17)
+    at 
+Function.route (C:\Us
+ers\alexi\OneDrive\Es
+critorio\Project Mana
+ger\MICSA-Reporte-Dig
+ital\backend\node_mod
+ules\express\lib\appl
+ication.js:257:22)
+    at 
+app.<computed> [as 
+get] (C:\Users\alexi\
+OneDrive\Escritorio\P
+roject Manager\MICSA-
+Reporte-Digital\backe
+nd\node_modules\expre
+ss\lib\application.js
+:478:22)
+    at 
+Object.<anonymous> (C
+:\Users\alexi\OneDriv
+e\Escritorio\Project 
+Manager\MICSA-Reporte
+-Digital\backend\inde
+x.js:65:5) {
+  originalPath: 
+'/:path*'
+}
+
+Node.js v22.21.0

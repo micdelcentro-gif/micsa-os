@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Datos Maestros</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .master-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .master-sidebar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .master-menu-item {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .master-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .master-menu-item.active {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .master-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--card-border);
+            color: var(--text-muted);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Regresar</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">🗂️</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Administración de Datos Maestros</p>
+            </div>
+            <div class="header-info">
+                <h1>DATOS MAESTROS</h1>
+                <p>Configuración del Catálogo de Cuentas y Entidades Fiscales</p>
+            </div>
+        </header>
+
+        <div class="master-grid">
+            <aside class="master-sidebar">
+                <div class="master-menu-item active" onclick="showMaster('cuentas')">
+                    <span>📂</span> Catálogo de Cuentas
+                </div>
+                <div class="master-menu-item" onclick="showMaster('entidades')">
+                    <span>🏢</span> Entidades Fiscales
+                </div>
+                <div class="master-menu-item" onclick="showMaster('proyectos')">
+                    <span>🏗️</span> Centros de Costo (Proyectos)
+                </div>
+            </aside>
+
+            <main class="master-content">
+                <!-- Catálogo de Cuentas -->
+                <div id="view-cuentas">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2>Catálogo de Cuentas</h2>
+                        <button class="btn btn-primary">+ Nueva Cuenta</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Naturaleza</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountsListBody">
+                            <!-- JS fill -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Entidades Fiscales -->
+                <div id="view-entidades" class="hidden">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2>Entidades Fiscales (Clientes/Proveedores)</h2>
+                        <button class="btn btn-primary">+ Nueva Entidad</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>RFC</th>
+                                <th>Razón Social</th>
+                                <th>Tipo</th>
+                                <th>RFC Banco</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="entitiesListBody">
+                            <!-- JS fill -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Master Data Management</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAccounts();
+            loadEntities();
+        });
+
+        function showMaster(id) {
+            document.querySelectorAll('.master-menu-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
+
+            document.getElementById(`view-${id}`).classList.remove('hidden');
+            event.target.closest('.master-menu-item').classList.add('active');
+        }
+
+        async function loadAccounts() {
+            try {
+                const res = await fetch('/api/accounting/accounts');
+                const data = await res.json();
+                const tbody = document.getElementById('accountsListBody');
+                tbody.innerHTML = '';
+                data.forEach(acc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${acc.code}</strong></td>
+                        <td>${acc.name}</td>
+                        <td><span class="status-pill pill-verde" style="background:#1e293b; color:#94a3b8; font-size:0.6rem;">${acc.type}</span></td>
+                        <td>${acc.nature}</td>
+                        <td><button class="btn btn-secondary" style="padding:4px 8px;">Editar</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        async function loadEntities() {
+            try {
+                const res = await fetch('/api/accounting/entities');
+                const data = await res.json();
+                const tbody = document.getElementById('entitiesListBody');
+                tbody.innerHTML = '';
+                data.forEach(ent => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${ent.rfc}</td>
+                        <td>${ent.business_name}</td>
+                        <td>${ent.type}</td>
+                        <td>${ent.bank_rfc || 'N/A'}</td>
+                        <td><button class="btn btn-secondary" style="padding:4px 8px;">Editar</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) { console.error(err); }
+        }
+    </script>
+</body>
+
+</html>

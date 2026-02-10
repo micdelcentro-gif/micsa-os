@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Sistema de Identificación y Etiquetado</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <!-- Librerías para XLSX y PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* Estilos específicos para la tabla de etiquetado */
+        .tag-color-preview {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Colores de etiquetas */
+        .tag-blue {
+            background-color: #3b82f6;
+        }
+
+        .tag-yellow {
+            background-color: #eab308;
+        }
+
+        .tag-green {
+            background-color: #22c55e;
+        }
+
+        .tag-red {
+            background-color: #ef4444;
+        }
+
+        .tag-gray {
+            background-color: #9ca3af;
+        }
+
+        .tag-orange {
+            background-color: #f97316;
+        }
+
+        .tag-white {
+            background-color: #ffffff;
+        }
+
+        /* Ajustes de columnas para que quepa todo */
+        .table-etiquetado th,
+        .table-etiquetado td {
+            font-size: 0.85rem;
+            padding: 10px 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Volver al Dashboard</a>
+                <div class="logo">
+                    <span class="logo-icon">🏷️</span>
+                    <span class="logo-text">MICSA</span>
+                </div>
+                <p class="logo-subtitle">Sistema de Identificación</p>
+            </div>
+            <div class="header-info">
+                <h1>SISTEMA DE IDENTIFICACIÓN Y ETIQUETADO</h1>
+                <p id="displayProjectHeader">Proyecto: Sin asignar</p>
+                <div class="doc-info">
+                    <span><strong>Doc:</strong> SYS-TAG-01</span>
+                    <span><strong>Rev:</strong> 01</span>
+                    <input type="hidden" id="reportId">
+                </div>
+            </div>
+        </header>
+
+        <!-- Formulario Principal -->
+        <form id="etiquetadoForm">
+            <!-- Tabla de Etiquetas -->
+            <section class="form-section">
+                <h2 class="section-title" style="background: #eab308; color: #000;">
+                    🏷️ CÓDIGO DE ETIQUETAS
+                </h2>
+                <div class="table-container">
+                    <table class="data-table table-etiquetado" id="etiquetasTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Prefijo</th>
+                                <th style="width: 150px;">Categoría (Nombre)</th>
+                                <th style="width: 250px;">Descripción</th>
+                                <th style="width: 120px;">Formato</th>
+                                <th style="width: 80px;">Color</th>
+                                <th style="width: 80px;">Peso (KG)</th>
+                                <th style="width: 120px;">Dimensiones</th>
+                                <th style="width: 130px;">Ubicación</th>
+                                <th style="width: 120px;">Responsable</th>
+                                <th style="width: 40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se agregarán dinámicamente -->
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add" onclick="addEtiquetaRow()">+ Agregar Etiqueta</button>
+                </div>
+            </section>
+
+            <!-- Acciones -->
+            <div class="form-actions no-print"
+                style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; text-align: right;">
+                <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">🗑️ Limpiar Todo</button>
+                <button type="button" class="btn btn-success"
+                    onclick="document.getElementById('importExcel').click()">📊 Importar Excel</button>
+                <button type="button" class="btn btn-info" onclick="exportToExcel()">📊 Exportar Excel</button>
+                <button type="button" class="btn btn-primary" onclick="guardarSistemaEtiquetado()">💾 Guardar
+                    Sistema</button>
+            </div>
+
+            <!-- Hidden Input for Excel Import -->
+            <input type="file" id="importExcel" accept=".xlsx, .xls" style="display: none;"
+                onchange="importFromExcel(event)">
+        </form>
+
+        <footer class="footer">
+            <p>MICSA Soluciones Industriales | Sistema de Control de Calidad ISO 9001:2015</p>
+        </footer>
+    </div>
+
+    <script src="../js/excel-import.js"></script>
+    <script src="../js/excel-export.js"></script>
+    <script src="../js/categories-data.js"></script>
+    <script src="../js/etiquetado.js"></script>
+    <script>
+        // Inicialización manejada por etiquetado.js
+    </script>
+</body>
+
+</html>

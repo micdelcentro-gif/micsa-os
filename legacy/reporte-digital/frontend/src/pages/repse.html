@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Legal & Compliance REPSE</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+
+    <style>
+        :root {
+            --verde-micsa: #10b981;
+            --amarillo-micsa: #f59e0b;
+            --rojo-micsa: #ef4444;
+        }
+
+        .repse-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Sidebar Navigation */
+        .repse-sidebar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .repse-menu-item {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .repse-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .repse-menu-item.active {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Dashboard View */
+        .repse-dashboard-header {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .repse-kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Traffic Light */
+        .semaforo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .semaforo-verde {
+            background: var(--verde-micsa);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .semaforo-amarillo {
+            background: var(--amarillo-micsa);
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
+        }
+
+        .semaforo-rojo {
+            background: var(--rojo-micsa);
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Content Area */
+        .repse-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        /* Tables & Cards */
+        .legal-doc-card {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pill-verde {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--verde-micsa);
+        }
+
+        .pill-amarillo {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--amarillo-micsa);
+        }
+
+        .pill-rojo {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--rojo-micsa);
+        }
+
+        .block-notice {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--rojo-micsa);
+            color: var(--rojo-micsa);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← DASHBOARD PRINCIPAL</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">⚖️</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Legal & Compliance</p>
+            </div>
+            <div class="header-info text-right">
+                <h1 id="globalStatusTitle">CUMPLIMIENTO REPSE</h1>
+                <p>Módulo de Control y Bloqueo Operativo</p>
+            </div>
+        </header>
+
+        <div id="blockingNotice" class="block-notice hidden">
+            <span>🚫</span>
+            <span>SISTEMA BLOQUEADO: Se detectaron documentos vencidos o periodos incompletos. Se restringen operaciones
+                críticas.</span>
+        </div>
+
+        <div class="repse-grid">
+            <!-- Sidebar Navigation -->
+            <aside class="repse-sidebar">
+                <div class="repse-menu-item active" onclick="showSubmodule('dashboard')">
+                    <span>📊</span> Dashboard REPSE
+                </div>
+                <div class="repse-menu-item" onclick="showSubmodule('base-legal')">
+                    <span>📜</span> Base Legal REPSE
+                </div>
+                <div class="repse-menu-item" onclick="showSubmodule('cumplimiento')">
+                    <span>📅</span> Cumplimiento Mensual
+                </div>
+                <div class="repse-menu-item" onclick="showSubmodule('personal')">
+                    <span>👷</span> Personal REPSE
+                </div>
+                <div class="repse-menu-item" onclick="showSubmodule('alertas')">
+                    <span>🚨</span> Alertas & Bloqueos
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="repse-content">
+
+                <!-- SUBMÓDULO: DASHBOARD -->
+                <div id="view-dashboard" class="submodule-view">
+                    <div class="content-header">
+                        <h2>CEO View - Estado de Cumplimiento</h2>
+                        <div id="lastUpdate">Actualizado: --:--</div>
+                    </div>
+
+                    <div class="repse-dashboard-header">
+                        <div class="repse-kpi-card">
+                            <div id="mainSemaforo" class="semaforo semaforo-verde">🟢</div>
+                            <div class="kpi-label">Estado General</div>
+                            <h3 id="semaforoText" style="margin-top: 10px; color: var(--verde-micsa);">OPERABLE</h3>
+                        </div>
+                        <div class="repse-kpi-card">
+                            <div class="kpi-value" id="percentCompliance">0%</div>
+                            <div class="kpi-label">% Cumplimiento Global</div>
+                            <button class="btn btn-secondary" onclick="syncWithContalink()"
+                                style="margin-top: 10px; font-size: 0.7rem;">🔄 Sincronizar XMLs</button>
+                        </div>
+                        <div class="repse-kpi-card">
+                            <div class="kpi-value" id="blockedCount" style="color: var(--rojo-micsa);">0</div>
+                            <div class="kpi-label">Proyectos Bloqueados</div>
+                        </div>
+                    </div>
+
+                    <div class="repse-kpi-card" style="margin-top: 30px; text-align: left;">
+                        <div class="report-section-title">Fiscal & Compliance Matrix (Contalink Style)</div>
+                        <h3 style="margin-bottom:15px;">Matriz Operativa de Obligaciones</h3>
+                        <table class="financial-table" style="font-size: 0.8rem;">
+                            <thead>
+                                <tr>
+                                    <th>Concepto Obligación</th>
+                                    <th style="text-align: center;">Estatus</th>
+                                    <th>Última Validación</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fiscalMatrixBody">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+                        <div class="repse-kpi-card" style="text-align: left;">
+                            <h3 style="margin-bottom: 15px;">⚠️ Próximos Vencimientos</h3>
+                            <ul id="vencimientosList" style="list-style: none;">
+                                <li style="color: var(--text-muted);">Sin alertas próximas</li>
+                            </ul>
+                        </div>
+                        <div class="repse-kpi-card" style="text-align: left;">
+                            <h3 style="margin-bottom: 15px;">🏗️ Riesgo por Proyecto</h3>
+                            <ul id="proyectosRiesgoList" style="list-style: none;">
+                                <li style="color: var(--text-muted);">Todos los proyectos en verde</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMÓDULO: BASE LEGAL -->
+                <div id="view-base-legal" class="submodule-view hidden">
+                    <div class="content-header">
+                        <h2>Base Legal REPSE</h2>
+                        <button class="btn btn-primary" onclick="openLegalModal()">+ Cargar Documento</button>
+                    </div>
+                    <div id="baseLegalList">
+                        <!-- Items dinámicos -->
+                    </div>
+                </div>
+
+                <!-- Adicionales se implementarán dinámicamente -->
+                <div id="view-cumplimiento" class="submodule-view hidden">
+                    <div class="content-header">
+                        <h2>Cumplimiento Mensual / Bimestral</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="periodYear" class="btn btn-secondary" style="padding: 10px;"></select>
+                            <select id="periodMonth" class="btn btn-secondary" style="padding: 10px;"></select>
+                        </div>
+                    </div>
+                    <div id="periodosList"></div>
+                </div>
+
+            </main>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p><strong>MICSA OS - Corporate Compliance System</strong></p>
+            <p>Diseño e Implementación de Alto Nivel para Gestión Industrial</p>
+        </footer>
+    </div>
+
+    <!-- Modals (Base para el Desarrollador) -->
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cargar Documento Base</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="legalForm">
+                <div class="form-group">
+                    <label>Tipo de Documento:</label>
+                    <select id="legalDocType" required>
+                        <option value="Constancia REPSE">Constancia REPSE</option>
+                        <option value="Constancia Situación Fiscal">Constancia Situación Fiscal</option>
+                        <option value="Acta Constitutiva">Acta Constitutiva</option>
+                        <option value="INE Representante Legal">INE Representante Legal</option>
+                        <option value="Comprobante Domicilio">Comprobante Domicilio</option>
+                    </select>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Fecha Emisión:</label>
+                        <input type="date" id="legalFechaEmision">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Vencimiento:</label>
+                        <input type="date" id="legalFechaVencimiento">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>Archivo PDF:</label>
+                    <input type="file" id="legalFile" accept=".pdf" required>
+                </div>
+                <div class="form-actions"
+                    style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar e Iniciar Validación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/repse_enterprise.js"></script>
+</body>
+
+</html>

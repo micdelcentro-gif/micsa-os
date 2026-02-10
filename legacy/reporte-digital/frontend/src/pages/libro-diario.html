@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Libro Diario</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .journal-entry {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .journal-table th {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .journal-table td {
+            padding: 8px;
+        }
+
+        .amount-col {
+            text-align: right;
+            width: 120px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Herramientas Contador</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">📖</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Registro Cronológico de Pólizas</p>
+            </div>
+            <div class="header-info">
+                <h1>LIBRO DIARIO</h1>
+                <p>Visualización Detallada de Asientos Contables</p>
+            </div>
+        </header>
+
+        <div class="filter-bar" style="margin-top: 30px;">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <label>Periodo:</label>
+                <input type="date" id="dateStart" class="btn btn-secondary">
+                <span>a</span>
+                <input type="date" id="dateEnd" class="btn btn-secondary">
+            </div>
+            <button class="btn btn-primary" onclick="loadJournal()">Filtrar Libro</button>
+        </div>
+
+        <div id="journalContainer" style="margin-top: 30px;">
+            <!-- JS content -->
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Digital Bookkeeping System</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            document.getElementById('dateStart').value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            document.getElementById('dateEnd').value = now.toISOString().split('T')[0];
+            loadJournal();
+        });
+
+        async function loadJournal() {
+            const start = document.getElementById('dateStart').value;
+            const end = document.getElementById('dateEnd').value;
+            const container = document.getElementById('journalContainer');
+            container.innerHTML = '<p>Cargando pólizas...</p>';
+
+            try {
+                const res = await fetch(`/api/accounting/journal?start=${start}&end=${end}`);
+                const entries = await res.json();
+
+                container.innerHTML = '';
+                if (entries.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; padding: 50px; color: var(--text-muted);">No hay pólizas registradas en este rango.</p>';
+                    return;
+                }
+
+                entries.forEach(entry => {
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = 'journal-entry';
+
+                    let tableRows = '';
+                    entry.lines.forEach(line => {
+                        tableRows += `
+                            <tr>
+                                <td>${line.account_code} - ${line.account_name}</td>
+                                <td>${line.description}</td>
+                                <td class="amount-col">${line.debit > 0 ? formatCurrency(line.debit) : ''}</td>
+                                <td class="amount-col">${line.credit > 0 ? formatCurrency(line.credit) : ''}</td>
+                            </tr>
+                        `;
+                    });
+
+                    entryDiv.innerHTML = `
+                        <div class="journal-header">
+                            <div>
+                                <strong style="color:var(--accent-color)">PÓLIZA DE ${entry.type || 'DIARIO'} #${entry.number || entry.id}</strong>
+                                <br><small>${entry.date}</small>
+                            </div>
+                            <div style="text-align: right">
+                                <strong>Concepto:</strong> ${entry.concept}
+                            </div>
+                        </div>
+                        <table class="journal-table">
+                            <thead>
+                                <tr>
+                                    <th>Cuenta</th>
+                                    <th>Descripción</th>
+                                    <th class="amount-col">Debe</th>
+                                    <th class="amount-col">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>
+                    `;
+                    container.appendChild(entryDiv);
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p>Error al cargar el libro diario.</p>';
+            }
+        }
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+    </script>
+</body>
+
+</html>

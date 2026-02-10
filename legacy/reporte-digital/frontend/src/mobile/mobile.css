@@ -1,0 +1,108 @@
+/* =====================================
+   MENÚ FLOTANTE MÓVIL (FAB)
+   ===================================== */
+.fab-container {
+    display: none; /* Oculto por defecto en escritorio */
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.fab-main {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.fab-main:active {
+    transform: scale(0.95);
+}
+
+.fab-container.active .fab-main {
+    transform: rotate(45deg);
+    background: var(--danger-color);
+}
+
+.fab-options {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+    pointer-events: none; /* Evita clicks cuando están invisibles */
+}
+
+.fab-container.active .fab-options {
+    pointer-events: auto;
+}
+
+.fab-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 10px 16px;
+    border-radius: 30px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.fab-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* Animación de entrada escalonada */
+.fab-container.active .fab-btn {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.fab-container.active .fab-btn:nth-child(1) { transition-delay: 0.05s; }
+.fab-container.active .fab-btn:nth-child(2) { transition-delay: 0.1s; }
+.fab-container.active .fab-btn:nth-child(3) { transition-delay: 0.15s; }
+.fab-container.active .fab-btn:nth-child(4) { transition-delay: 0.2s; }
+.fab-container.active .fab-btn:nth-child(5) { transition-delay: 0.25s; }
+
+/* MEDIA QUERY: Activar FAB solo en móviles */
+@media (max-width: 768px) {
+    .action-buttons {
+        display: none !important; /* Ocultar barra horizontal */
+    }
+
+    .fab-container {
+        display: block; /* Mostrar FAB */
+    }
+    
+    /* Ajuste para que el último elemento no quede tapado por el FAB */
+    .container {
+        padding-bottom: 100px;
+    }
+}

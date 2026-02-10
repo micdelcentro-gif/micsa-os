@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MICSA OS - Bridge</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #94a3b8;
+        }
+
+        .loader {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #1e293b;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+        <p>Cargando módulo...</p>
+    </div>
+    <script>
+        /**
+         * Bridge page: auto-authenticates and redirects to target legacy module.
+         * Also injects iframe-mode styles to hide redundant nav elements.
+         * Usage: /src/pages/bridge.html?target=contador-hub.html
+         */
+        (async function () {
+            const params = new URLSearchParams(window.location.search);
+            const target = params.get('target');
+
+            if (!target) {
+                document.querySelector('p').textContent = 'Error: No se especificó módulo destino.';
+                return;
+            }
+
+            // Mark that we're in iframe mode — legacy pages will check this
+            sessionStorage.setItem('MICSA_IFRAME_MODE', 'true');
+
+            // Check if already authenticated
+            const existingToken = localStorage.getItem('MICSA_AUTH_TOKEN');
+            if (existingToken) {
+                window.location.replace('/src/pages/' + target);
+                return;
+            }
+
+            // Auto-login with admin credentials
+            try {
+                const resp = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+
+                if (!resp.ok) {
+                    throw new Error('Login failed: ' + resp.status);
+                }
+
+                const data = await resp.json();
+
+                // Store auth data
+                localStorage.setItem('MICSA_AUTH_TOKEN', data.token);
+                localStorage.setItem('MICSA_USER', JSON.stringify(data.user));
+
+                // Redirect to the target module
+                window.location.replace('/src/pages/' + target);
+            } catch (err) {
+                document.querySelector('p').textContent = 'Error de autenticación: ' + err.message;
+                console.error('Bridge auth error:', err);
+            }
+        })();
+    </script>
+</body>
+
+</html>

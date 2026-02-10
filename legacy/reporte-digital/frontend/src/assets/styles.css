@@ -1,0 +1,1455 @@
+/**
+ * ============================================
+ * MICSA - SISTEMA INTEGRADO DE GESTIÓN
+ * Estilos CSS Principales
+ * ============================================
+ * 
+ * Este archivo contiene todos los estilos compartidos del sistema.
+ * Es utilizado por: index.html, matriz-iso.html, guia-iso.html, dashboard.html
+ * 
+ * ORGANIZACIÓN DEL ARCHIVO:
+ * 
+ * 1. VARIABLES CSS (:root)
+ *    - Colores principales y secundarios
+ *    - Colores de estado (success, warning, danger)
+ *    - Colores de fondo y bordes
+ *    - Gradientes
+ *    - Sombras
+ *    - Transiciones
+ * 
+ * 2. RESET Y BASE
+ *    - Reset de márgenes y padding
+ *    - Box-sizing border-box
+ *    - Estilos base del body
+ * 
+ * 3. COMPONENTES PRINCIPALES:
+ *    - .container: Contenedor principal centrado
+ *    - .header: Encabezado con logo y título
+ *    - .form-section: Secciones del formulario
+ *    - .section-header: Encabezados de sección con gradiente
+ * 
+ * 4. FORMULARIOS:
+ *    - .form-grid: Grid de campos de formulario
+ *    - .form-row: Fila de campo con label
+ *    - .form-group: Grupo de campos
+ *    - Inputs, selects, textareas
+ * 
+ * 5. TABLAS:
+ *    - .table-container: Contenedor de tablas
+ *    - Estilos de th, td
+ *    - .add-row-btn: Botón para agregar filas
+ * 
+ * 6. COMPONENTES ESPECÍFICOS:
+ *    - .hse-grid: Grid de seguridad HSE
+ *    - .photo-grid: Grid de fotos
+ *    - .checklist-grid: Grid de verificación
+ *    - .firmas-grid: Sección de firmas
+ * 
+ * 7. BOTONES:
+ *    - .btn: Estilos base
+ *    - .btn-primary, .btn-secondary, .btn-success, .btn-danger
+ * 
+ * 8. RESPONSIVE:
+ *    - Breakpoints para tablets y móviles
+ *    - Ajustes de grid y fuentes
+ * 
+ * 9. IMPRESIÓN:
+ *    - @media print: Estilos para PDF
+ * 
+ * TEMA: Dark Mode con acentos azules
+ * FUENTE: Inter (Google Fonts)
+ */
+
+/* =============================================
+   SECCIÓN 1: VARIABLES CSS (Custom Properties)
+   ============================================= 
+   Definimos todas las variables en :root para 
+   facilitar la personalización y mantenimiento
+*/
+:root {
+    /* Colores principales de la marca */
+    --primary-color: #1a365d;
+    /* Azul oscuro principal */
+    --primary-light: #2c5282;
+    /* Azul medio para encabezados */
+    --secondary-color: #2563eb;
+    /* Azul brillante */
+    --accent-color: #3b82f6;
+    /* Azul de acento para interacciones */
+
+    /* Colores de estado/feedback */
+    --success-color: #10b981;
+    /* Verde para éxito/confirmación */
+    --warning-color: #f59e0b;
+    /* Amarillo para advertencias */
+    --danger-color: #ef4444;
+    /* Rojo para errores/eliminar */
+
+    /* Colores de fondo (Dark Theme) */
+    --dark-bg: #0f172a;
+    /* Fondo principal muy oscuro */
+    --card-bg: #1e293b;
+    /* Fondo de tarjetas/secciones */
+    --card-border: #334155;
+    /* Borde de tarjetas */
+
+    /* Colores de texto */
+    --text-primary: #f1f5f9;
+    /* Texto principal (casi blanco) */
+    --text-secondary: #94a3b8;
+    /* Texto secundario (gris claro) */
+    --text-muted: #64748b;
+    /* Texto deshabilitado/menor importancia */
+
+    /* Colores de inputs */
+    --input-bg: #0f172a;
+    /* Fondo de campos */
+    --input-border: #475569;
+    /* Borde de campos */
+    --input-focus: #3b82f6;
+    /* Borde al enfocar */
+
+    /* Gradientes para elementos destacados */
+    --gradient-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    --gradient-header: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+
+    /* Sombras para profundidad */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+    /* Valores comunes reutilizables */
+    --border-radius: 12px;
+    /* Radio de bordes estándar */
+    --transition: all 0.3s ease;
+    /* Transición suave */
+}
+
+/* ===== Reset y Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===== Container Principal ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===== Header ===== */
+.header {
+    background: var(--gradient-header);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+}
+
+.logo-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-left: 60px;
+}
+
+.header-info {
+    text-align: right;
+}
+
+.header-info h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.header-info p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Inputs en el Header */
+.header-input,
+.inline-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.header-input {
+    width: 280px;
+    text-align: right;
+}
+
+#reporteNo {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--accent-light);
+}
+
+.header-input:focus,
+.inline-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-light);
+    outline: none;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.doc-info {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.inline-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--input-border);
+    color: var(--text-primary);
+    padding: 2px 8px;
+    width: 80px;
+    font-family: inherit;
+}
+
+.inline-input:focus {
+    outline: none;
+    border-bottom-color: var(--accent-color);
+}
+
+/* ===== Secciones del Formulario ===== */
+.form-section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.form-section:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.section-header {
+    background: var(--gradient-primary);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.section-number {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.section-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: white;
+}
+
+/* ===== Form Grid ===== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 24px;
+}
+
+.form-grid.compact {
+    gap: 16px;
+    padding: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-row label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-row input,
+.form-row select {
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.form-row input:focus,
+.form-row select:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.form-row input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== Tables ===== */
+.table-container {
+    padding: 0 24px 24px;
+    overflow-x: auto;
+    /* Permitir scroll horizontal en móviles */
+    -webkit-overflow-scrolling: touch;
+    /* Suavidad en iOS */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--input-bg);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background: var(--primary-light);
+}
+
+th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+td input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+td input:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+td input.wide-input {
+    min-width: 300px;
+}
+
+.add-row-btn {
+    margin-top: 16px;
+    padding: 10px 20px;
+    background: transparent;
+    border: 2px dashed var(--input-border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.add-row-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* ===== Textarea y Form Groups ===== */
+.form-group {
+    padding: 0 24px 24px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: var(--transition);
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.form-group select option {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+/* ===== Dual Section (Avance + Ruta Crítica) ===== */
+.dual-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.dual-left,
+.dual-right {
+    padding: 0;
+}
+
+.dual-right {
+    border-left: 1px solid var(--card-border);
+}
+
+.dual-left .section-header,
+.dual-right .section-header {
+    border-radius: 0;
+}
+
+.dual-right .form-group {
+    padding: 16px 24px;
+}
+
+.dual-right .form-group:first-of-type {
+    padding-top: 24px;
+}
+
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-with-unit input {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.input-with-unit span {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ===== HSE Grid ===== */
+.hse-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    padding: 24px;
+    background: var(--input-bg);
+}
+
+.hse-item {
+    text-align: center;
+}
+
+.hse-item label:first-child {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.hse-item input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    text-align: center;
+    font-family: inherit;
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.toggle-option {
+    cursor: pointer;
+}
+
+.toggle-option input {
+    display: none;
+}
+
+.toggle-label {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.toggle-label.yes {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.toggle-label.no {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.toggle-option input:checked+.toggle-label {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px currentColor;
+}
+
+.toggle-option input:not(:checked)+.toggle-label {
+    opacity: 0.4;
+    border-color: transparent;
+}
+
+/* ===== Incidencias Grid ===== */
+.incidencias-grid {
+    display: grid;
+    gap: 20px;
+    padding: 24px;
+}
+
+.label-highlight {
+    background: var(--primary-light);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 12px !important;
+    font-size: 0.85rem !important;
+}
+
+/* ===== Photo Grid ===== */
+.section-note {
+    padding: 16px 24px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 24px;
+}
+
+.photo-upload {
+    background: var(--input-bg);
+    border: 2px dashed var(--input-border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.photo-upload:hover {
+    border-color: var(--accent-color);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.photo-preview {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.camera-icon {
+    font-size: 2rem;
+    color: var(--text-muted);
+}
+
+.photo-preview span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.photo-upload label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== Checklist Grid ===== */
+.subsection-title {
+    padding: 16px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--success-color);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 24px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--input-bg);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.checklist-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.checklist-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--success-color);
+    cursor: pointer;
+}
+
+.checklist-item span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.checklist-item:has(input:checked) span {
+    color: var(--text-primary);
+}
+
+/* ===== Cierre Section ===== */
+.cierre-section {
+    background: var(--gradient-header);
+}
+
+.cierre-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cierre-content {
+    padding: 30px;
+}
+
+.cierre-content p {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.8;
+}
+
+.firmas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.firma-box {
+    text-align: center;
+}
+
+.firma-line {
+    border-bottom: 2px solid var(--text-secondary);
+    margin-bottom: 10px;
+    height: 60px;
+}
+
+.firma-nombre {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--input-border);
+    color: var(--text-primary);
+    text-align: center;
+    width: 100%;
+    padding: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.firma-nombre:focus {
+    outline: none;
+    border-bottom-color: var(--accent-color);
+}
+
+.firma-cargo {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-logo {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+.disclaimer {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.micsa-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.micsa-footer .logo-icon {
+    font-size: 1.5rem;
+}
+
+.micsa-footer .logo-text {
+    font-size: 1.5rem;
+}
+
+/* ===== Action Buttons (Floating) ===== */
+.action-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    z-index: 9999;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    flex-wrap: wrap;
+    animation: barSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes barSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.action-buttons:hover {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.container {
+    padding-bottom: 120px;
+    /* Espacio para que el botón flotante no tape el contenido */
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+}
+
+.btn-danger {
+    background: transparent;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.btn-danger:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* Botón de eliminación pequeño para filas */
+.btn-delete {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ff4d4d;
+    /* Rojo brillante más visible */
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 50%;
+    /* Circular */
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0;
+    margin: 0 auto;
+    /* Centrar en la celda */
+}
+
+.btn-delete:hover {
+    background: #ef4444;
+    /* Rojo sólido al hover */
+    color: white;
+    transform: rotate(90deg) scale(1.1);
+    /* Efecto visual al hover */
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+    .dual-section {
+        grid-template-columns: 1fr;
+    }
+
+    .dual-right {
+        border-left: none;
+        border-top: 1px solid var(--card-border);
+    }
+
+    .hse-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .header-info {
+        text-align: center;
+    }
+
+    .logo-subtitle {
+        margin-left: 0;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .checklist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .firmas-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .hse-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Tabla responsiva: forzar scroll y ajustar fuentes */
+    table {
+        min-width: 600px;
+        /* Asegurar ancho mínimo para activar scroll */
+        font-size: 0.85rem;
+    }
+
+    th,
+    td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .section-header {
+        padding: 12px 16px;
+    }
+
+    .section-header h2 {
+        font-size: 0.85rem;
+    }
+
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hse-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================
+   ESTILOS DE IMPRESIÓN (@media print)
+   =============================================
+   Estos estilos se aplican cuando se genera PDF
+   o se imprime el documento. Configurados para
+   que TODO el contenido salga seguido sin saltos
+   de página innecesarios.
+*/
+@media print {
+
+    /* ----- CONFIGURACIÓN GENERAL DE PÁGINA ----- */
+    @page {
+        /* Tamaño carta, márgenes mínimos para maximizar contenido */
+        size: letter;
+        margin: 10mm;
+    }
+
+    /* ----- RESET DE COLORES PARA IMPRESIÓN ----- */
+    * {
+        /* Permitir que los colores de fondo se impriman */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body {
+        /* Fondo blanco para impresión */
+        background: white !important;
+        color: #1a1a1a !important;
+        font-size: 11pt;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* ----- EVITAR SALTOS DE PÁGINA ----- */
+    /* Esto es clave para que todo salga seguido */
+    .form-section,
+    .section-header,
+    table,
+    tr,
+    .form-grid,
+    .form-row,
+    .form-group,
+    .hse-grid,
+    .hse-item,
+    .photo-grid,
+    .photo-upload,
+    .checklist-grid,
+    .checklist-item,
+    .incidencias-grid,
+    .firmas-grid,
+    .firma-box,
+    .cierre-section,
+    .cierre-content,
+    .dual-section,
+    .dual-left,
+    .dual-right {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* ----- FORZAR FONDO BLANCO TOTAL ----- */
+    body,
+    html {
+        background: white !important;
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .container {
+        background: white !important;
+        background-color: white !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Permitir que las secciones fluyan continuamente */
+    .form-section {
+        background: white !important;
+        background-color: white !important;
+        page-break-after: auto !important;
+        break-after: auto !important;
+        margin-bottom: 20px !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+    }
+
+    .form-grid,
+    .hse-grid,
+    .checklist-grid,
+    .incidencias-grid,
+    .dual-section,
+    .dual-left,
+    .dual-right,
+    .form-group,
+    .form-row,
+    .hse-item,
+    .checklist-item,
+    .firma-box,
+    .photo-upload,
+    .cierre-section,
+    .cierre-content,
+    .footer-logo,
+    .micsa-footer {
+        background: white !important;
+        background-color: white !important;
+    }
+
+    label,
+    span,
+    p,
+    h1,
+    h2,
+    h3,
+    th,
+    td {
+        color: black !important;
+    }
+
+    /* ----- AJUSTES DE HEADER PROFESIONAL ----- */
+    .header {
+        background: white !important;
+        color: black !important;
+        padding: 10px 0 !important;
+        margin-bottom: 20px !important;
+        border-bottom: 2px solid #333 !important;
+        border-radius: 0 !important;
+        page-break-after: avoid !important;
+    }
+
+    .header-info h1 {
+        color: black !important;
+        font-size: 16pt !important;
+        margin-bottom: 2px !important;
+    }
+
+    .header-info p {
+        color: #333 !important;
+        font-weight: 600 !important;
+    }
+
+    .header-input,
+    .inline-input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        color: black !important;
+        font-weight: bold !important;
+    }
+
+    .header .header-input,
+    .header .inline-input {
+        border-bottom: none !important;
+    }
+
+    .logo-text {
+        background: none !important;
+        -webkit-text-fill-color: #1e3a8a !important;
+        color: #1e3a8a !important;
+        font-size: 24pt !important;
+    }
+
+    .logo-subtitle {
+        color: #666 !important;
+    }
+
+    /* ----- AJUSTES DE SECCIONES (LIMPIO) ----- */
+    .section-header,
+    .cierre-header {
+        background: #f1f5f9 !important;
+        background-color: #f1f5f9 !important;
+        background-image: none !important;
+        color: black !important;
+        padding: 8px 12px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-left: 5px solid #1e40af !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .section-header h2,
+    .cierre-header h2 {
+        color: black !important;
+        background: transparent !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+    }
+
+    .section-number {
+        background: #1e40af !important;
+        background-color: #1e40af !important;
+        color: white !important;
+    }
+
+    /* ----- TABLAS PROFESIONALES ----- */
+    table {
+        width: 100% !important;
+        font-size: 9pt !important;
+        border-collapse: collapse !important;
+        margin-bottom: 15px !important;
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+    }
+
+    th,
+    td {
+        padding: 5px 8px !important;
+        border: 1px solid #94a3b8 !important;
+        color: black !important;
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+    }
+
+    thead,
+    tr,
+    thead tr {
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+    }
+
+    th {
+        color: black !important;
+        background: #e2e8f0 !important;
+        background-color: #e2e8f0 !important;
+        background-image: none !important;
+        font-size: 8pt !important;
+        text-transform: uppercase !important;
+    }
+
+    td input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 9pt !important;
+        color: black !important;
+    }
+
+    /* ----- INPUTS Y FORMULARIOS ----- */
+    input,
+    select,
+    textarea {
+        border: none !important;
+        border-bottom: 1px solid #ccc !important;
+        background: transparent !important;
+        font-size: 10pt !important;
+        padding: 2px !important;
+        color: black !important;
+    }
+
+    /* ----- GRID DE FOTOS ----- */
+    .photo-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+        padding: 0 !important;
+    }
+
+    .photo-preview {
+        height: 100px !important;
+        border: 1px solid #ddd !important;
+        background: #fafafa !important;
+    }
+
+    /* ----- CHECKLIST ----- */
+    .checklist-item {
+        border: 1px solid #e2e8f0 !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    .checklist-item.checked {
+        background: #f8fafc !important;
+    }
+
+    /* ----- HSE ----- */
+    .hse-item label {
+        color: black !important;
+    }
+
+    .toggle-label {
+        border: 1px solid #ccc !important;
+        color: #666 !important;
+    }
+
+    .toggle-input:checked+.toggle-label {
+        background: #1e40af !important;
+        color: white !important;
+        border-color: #1e40af !important;
+    }
+
+    /* ----- FIRMAS ----- */
+    .firma-box {
+        border: 1px solid #eee !important;
+    }
+
+    .firma-nombre {
+        font-weight: bold !important;
+        color: black !important;
+    }
+
+    /* ----- OCULTAR ELEMENTOS ----- */
+    .action-buttons,
+    .add-row-btn,
+    .nav-breadcrumb,
+    .camera-icon,
+    .notification,
+    .btn-delete,
+    .no-print,
+    button {
+        display: none !important;
+    }
+
+    /* ----- FOOTER ----- */
+    .micsa-footer {
+        border-top: 1px solid #333 !important;
+        margin-top: 30px !important;
+        padding-top: 10px !important;
+    }
+
+    .micsa-footer .logo-text {
+        font-size: 14pt !important;
+    }
+}
+
+/* =============================================
+   IFRAME MODE: Cuando se carga dentro de Next.js
+   ============================================= */
+body.iframe-mode nav.bg-primary,
+body.iframe-mode #userInfo,
+body.iframe-mode .header,
+body.iframe-mode .nav-breadcrumb,
+body.iframe-mode [onclick*="logout"] {
+    display: none !important;
+}
+
+body.iframe-mode {
+    padding-top: 0 !important;
+}
+
+body.iframe-mode .pt-24 {
+    padding-top: 1rem !important;
+}
+
+body.iframe-mode .container {
+    padding-top: 10px;
+}
+

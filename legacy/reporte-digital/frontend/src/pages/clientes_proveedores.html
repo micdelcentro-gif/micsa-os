@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes y Proveedores - MICSA OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .sidebar {
+            background: #003366;
+            width: 260px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen">
+
+    <aside class="sidebar fixed inset-y-0 left-0 z-50 overflow-y-auto">
+        <div class="p-6 flex items-center gap-3">
+            <img src="../assets/logo-micsa.png" alt="MICSA" class="h-8 bg-white p-1 rounded">
+            <span class="text-white font-bold text-xl">MICSA Contas</span>
+        </div>
+        <nav class="mt-6">
+            <a href="contabilidad.html"
+                class="flex items-center px-6 py-3 text-slate-300 hover:bg-white/10 hover:text-white">
+                <i class="fas fa-th-large mr-3"></i> Dashboard
+            </a>
+            <a href="catalogo_cuentas.html"
+                class="flex items-center px-6 py-3 text-slate-300 hover:bg-white/10 hover:text-white">
+                <i class="fas fa-list-ol mr-3"></i> Catálogo de Cuentas
+            </a>
+            <a href="polizas.html"
+                class="flex items-center px-6 py-3 text-slate-300 hover:bg-white/10 hover:text-white">
+                <i class="fas fa-file-invoice-dollar mr-3"></i> Pólizas
+            </a>
+            <a href="clientes_proveedores.html" class="flex items-center px-6 py-3 bg-secondary text-white font-medium">
+                <i class="fas fa-address-book mr-3"></i> Clientes/Proveedores
+            </a>
+            <a href="/" class="mt-20 flex items-center px-6 py-3 text-red-300 hover:bg-white/10">
+                <i class="fas fa-arrow-left mr-3"></i> Volver a MICSA OS
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 ml-[260px] p-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold">Clientes y Proveedores</h1>
+            <button onclick="openModal('entityModal')"
+                class="px-6 py-3 bg-secondary text-white rounded-xl font-bold flex items-center gap-2 shadow-lg">
+                <i class="fas fa-plus"></i> Nueva Entidad
+            </button>
+        </header>
+
+        <div class="mb-6 flex gap-4">
+            <button onclick="loadEntities('CLIENTE')"
+                class="px-4 py-2 bg-white border border-slate-200 rounded-lg font-medium hover:bg-slate-50 focus:ring-2 focus:ring-secondary">Clientes</button>
+            <button onclick="loadEntities('PROVEEDOR')"
+                class="px-4 py-2 bg-white border border-slate-200 rounded-lg font-medium hover:bg-slate-50 focus:ring-2 focus:ring-secondary">Proveedores</button>
+        </div>
+
+        <div class="card overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500">
+                    <tr>
+                        <th class="px-6 py-4">Nombre / Razón Social</th>
+                        <th class="px-6 py-4">RFC</th>
+                        <th class="px-6 py-4">Tipo</th>
+                        <th class="px-6 py-4">Email</th>
+                        <th class="px-6 py-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="entitiesTable" class="divide-y divide-slate-100">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal: Nueva Entidad -->
+    <div id="entityModal"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl p-8 shadow-2xl">
+            <h2 class="text-xl font-bold mb-6">Agregar Cliente o Proveedor</h2>
+            <form id="entityForm" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo</label>
+                        <select name="type" class="w-full border rounded-lg px-4 py-2">
+                            <option value="CLIENTE">Cliente</option>
+                            <option value="PROVEEDOR">Proveedor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">RFC</label>
+                        <input type="text" name="rfc" required class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre / Razón Social</label>
+                    <input type="text" name="name" required class="w-full border rounded-lg px-4 py-2">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Email</label>
+                        <input type="email" name="email" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono</label>
+                        <input type="text" name="phone" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dirección Fiscal / CP</label>
+                    <textarea name="address" rows="2" class="w-full border rounded-lg px-4 py-2"></textarea>
+                </div>
+                <div class="flex gap-3 pt-6">
+                    <button type="button" onclick="closeModal('entityModal')"
+                        class="flex-1 py-3 bg-slate-100 font-bold rounded-xl">Cancelar</button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-primary text-white font-bold rounded-xl">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        async function loadEntities(type = '') {
+            try {
+                const url = type ? `${API_URL}/entities?type=${type}` : `${API_URL}/entities`;
+                const res = await fetch(url);
+                const data = await res.json();
+                renderEntities(data);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderEntities(entities) {
+            const tbody = document.getElementById('entitiesTable');
+            tbody.innerHTML = entities.map(e => `
+                <tr class="hover:bg-slate-50 text-sm">
+                    <td class="px-6 py-4 font-bold">${e.name}</td>
+                    <td class="px-6 py-4 font-mono">${e.rfc}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase ${e.type === 'CLIENTE' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}">
+                            ${e.type}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-500">${e.email || '-'}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button class="text-blue-600 hover:text-blue-800 p-2"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('entityForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            try {
+                const res = await fetch(`${API_URL}/entities`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    closeModal('entityModal');
+                    loadEntities(data.type);
+                    e.target.reset();
+                }
+            } catch (err) { alert('Error al guardar'); }
+        };
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (auth.checkAuth()) loadEntities();
+        });
+    </script>
+</body>
+
+</html>

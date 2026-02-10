@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Auditoría Contable</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .audit-alert {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--rojo-micsa);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .audit-ok {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--verde-micsa);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .integrity-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+
+        .integrity-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .integrity-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Herramientas Contador</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">🕵️‍♂️</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Módulo de Auditoría e Integridad</p>
+            </div>
+            <div class="header-info">
+                <h1>AUDITORÍA CONTABLE</h1>
+                <p>Cruces de Información y Validación de Integridad Fiscal</p>
+            </div>
+        </header>
+
+        <section id="auditSummary">
+            <div id="integrityAudit" class="audit-ok">
+                <span style="font-size: 2rem;">✅</span>
+                <div>
+                    <strong>Validación XML vs Pólizas</strong>
+                    <p id="auditDetails">Iniciando auditoría de integridad...</p>
+                </div>
+            </div>
+
+            <div id="missingList" style="margin-top: 20px;"></div>
+        </section>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', runAudit);
+
+            async function runAudit() {
+                try {
+                    const res = await fetch('/api/accounting/audit/check-xmls');
+                    const data = await res.json();
+
+                    const summary = document.getElementById('integrityAudit');
+                    const details = document.getElementById('auditDetails');
+                    const missingList = document.getElementById('missingList');
+
+                    if (data.missing_count === 0) {
+                        summary.className = 'audit-ok';
+                        details.innerHTML = `Integridad Total: Se analizaron <strong>${data.total_xmls}</strong> XMLs y todos cuentan con su póliza contable correspondiente.`;
+                    } else {
+                        summary.className = 'audit-alert';
+                        details.innerHTML = `Atención: Se detectaron <strong>${data.missing_count}</strong> XMLs de un total de ${data.total_xmls} que NO tienen póliza contable.`;
+
+                        let html = '<h3>XMLs Pendientes de Contabilizar</h3>';
+                        html += '<table class="integrity-table"><thead><tr><th>UUID</th><th>Fecha</th><th>Emisor</th><th>Total</th></tr></thead><tbody>';
+                        data.missing.forEach(m => {
+                            html += `<tr>
+                                <td><small>${m.uuid}</small></td>
+                                <td>${m.fecha.split('T')[0]}</td>
+                                <td>${m.emisor}</td>
+                                <td>$${m.total.toFixed(2)}</td>
+                            </tr>`;
+                        });
+                        html += '</tbody></table>';
+                        missingList.innerHTML = html;
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        </script>
+
+        <div class="repse-kpi-card" style="margin-top: 30px; text-align: left;">
+            <div class="report-section-title">Cruces de Información (Control Interno)</div>
+            <table class="integrity-table">
+                <thead>
+                    <tr>
+                        <th>Regla de Auditoría</th>
+                        <th>Estado</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Pólizas vs UUID SAT</strong></td>
+                        <td><span class="status-pill pill-amarillo">Revisión</span></td>
+                        <td>Inconsistencia en 2 facturas de proveedores.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integridad Balanza (Sumas Iguales)</strong></td>
+                        <td><span class="status-pill pill-verde">Cuadrada</span></td>
+                        <td>Diferencia de $0.00 M.N.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Conciliación Bancaria vs Mayor</strong></td>
+                        <td><span class="status-pill pill-rojo">Error</span></td>
+                        <td>Diferencia de $14,200.50 detectada en Cuenta 102.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Digital Audit Engine | ISO 9001:2015 Compliant</p>
+        </footer>
+    </div>
+</body>
+
+</html>

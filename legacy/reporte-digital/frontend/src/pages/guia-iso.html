@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- ============================================
+         MICSA - GUÍA DE IMPLEMENTACIÓN ISO 9001:2015
+         ============================================
+         Este archivo contiene el roadmap completo para implementar
+         el Sistema de Gestión de Calidad ISO 9001:2015 en MICSA.
+         
+         Secciones incluidas:
+         1. Propósito de la guía
+         2. Requisitos previos
+         3. Roadmap de 7 fases (12 meses)
+         4. Documentos obligatorios
+         5. Checklist pre-auditoría
+         6. Criterios para casa auditora
+         7. Proceso de auditoría
+         8. Inversión estimada
+         9. Mejores prácticas
+         10. Cronograma visual
+         11. Resumen ejecutivo
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Guía de Implementación ISO 9001:2015</title>
+
+    <!-- Enlace a los estilos principales compartidos -->
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <!-- Fuente Inter de Google Fonts para tipografía moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/permissions.js"></script>
+
+    <!-- Estilos específicos para la guía ISO -->
+    <style>
+        /* =====================================
+           ESTILOS ESPECÍFICOS PARA GUÍA ISO
+           ===================================== */
+
+        /* Timeline/Roadmap visual de las 7 fases */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Línea vertical que conecta las fases */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        /* Cada fase del roadmap */
+        .timeline-item {
+            position: relative;
+            padding-left: 80px;
+            padding-bottom: 40px;
+        }
+
+        /* Círculo indicador de la fase */
+        .timeline-marker {
+            position: absolute;
+            left: 15px;
+            width: 34px;
+            height: 34px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Contenido de cada fase */
+        .timeline-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: var(--transition);
+        }
+
+        .timeline-content:hover {
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        /* Encabezado de fase con título y duración */
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Etiqueta de duración (Mes 1-2, etc.) */
+        .phase-duration {
+            background: var(--accent-color);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Lista de actividades de cada fase */
+        .phase-activities {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+
+        .phase-activities li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Icono de check antes de cada actividad */
+        .phase-activities li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        /* Grid de entregables de cada fase */
+        .deliverables {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* Etiqueta de cada entregable */
+        .deliverable-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* =====================================
+           TABLA DE DOCUMENTOS OBLIGATORIOS
+           ===================================== */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .doc-table th {
+            background: var(--primary-light);
+            padding: 14px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .doc-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        /* =====================================
+           CHECKLIST DE PREPARACIÓN
+           ===================================== */
+        .checklist-table {
+            width: 100%;
+        }
+
+        .checklist-table th {
+            background: var(--primary-light);
+            padding: 12px;
+            font-size: 0.8rem;
+        }
+
+        .checklist-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+
+        /* Columna de checkbox */
+        .check-col {
+            width: 50px;
+            text-align: center;
+        }
+
+        .check-col input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success-color);
+        }
+
+        /* =====================================
+           TABLA DE COSTOS/INVERSIÓN
+           ===================================== */
+        .cost-table {
+            width: 100%;
+        }
+
+        .cost-table th {
+            background: var(--primary-light);
+            padding: 12px;
+        }
+
+        .cost-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        /* Resaltado para totales */
+        .cost-total {
+            background: rgba(59, 130, 246, 0.1);
+            font-weight: 600;
+        }
+
+        /* =====================================
+           SECCIÓN DE MEJORES PRÁCTICAS
+           ===================================== */
+        .practices-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        /* Columna de "Lo que SÍ hacer" */
+        .do-column {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .do-column h4 {
+            color: var(--success-color);
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+        /* Columna de "Lo que NO hacer" */
+        .dont-column {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .dont-column h4 {
+            color: var(--danger-color);
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+        .practice-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .practice-list li {
+            padding: 10px 0;
+            padding-left: 28px;
+            position: relative;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .do-column .practice-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        .dont-column .practice-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+
+        /* =====================================
+           CRONOGRAMA VISUAL (12 MESES)
+           ===================================== */
+        .gantt-visual {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 4px;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        /* Cada mes del cronograma */
+        .gantt-month {
+            text-align: center;
+            padding: 10px 5px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Barra de fase en el cronograma */
+        .gantt-bar {
+            grid-column: span 2;
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Colores para cada fase */
+        .gantt-fase1 {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        }
+
+        .gantt-fase2 {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        .gantt-fase3 {
+            background: linear-gradient(135deg, #06b6d4, #22d3ee);
+        }
+
+        .gantt-fase4 {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .gantt-fase5 {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
+        .gantt-fase6 {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+
+        .gantt-fase7 {
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+        }
+
+        /* =====================================
+           RESUMEN EJECUTIVO
+           ===================================== */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            padding: 30px;
+        }
+
+        .summary-card {
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .summary-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* =====================================
+           LISTA DE CERTIFICADORES
+           ===================================== */
+        .certifiers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 24px;
+        }
+
+        .certifier-item {
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .certifier-item strong {
+            color: var(--text-primary);
+        }
+
+        /* =====================================
+           RESPONSIVE PARA MÓVILES
+           ===================================== */
+        @media (max-width: 768px) {
+            .practices-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .gantt-visual {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .certifiers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ============================================
+         CONTENEDOR PRINCIPAL
+         ============================================ -->
+    <div class="container">
+
+        <!-- Navegación de migajas de pan (breadcrumb) -->
+        <nav class="nav-breadcrumb"
+            style="display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:0.9rem;">
+            <a href="../../index.html" style="color:var(--accent-color);text-decoration:none;">🏠 Dashboard</a>
+            <span>›</span>
+            <span>Guía de Implementación ISO 9001:2015</span>
+        </nav>
+
+        <!-- ============================================
+             ENCABEZADO PRINCIPAL
+             ============================================ -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo">
+                    <span class="logo-icon">🏗️</span>
+                    <span class="logo-text">MICSA</span>
+                </div>
+                <p class="logo-subtitle">Soluciones Industriales</p>
+            </div>
+            <div class="header-info">
+                <h1>GUÍA DE IMPLEMENTACIÓN ISO 9001:2015</h1>
+                <p>De Cero a Certificación - Roadmap Completo</p>
+                <div class="doc-info">
+                    <span>Objetivo: Preparación para Auditoría de Certificación</span>
+                    <span>Versión: 1.0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============================================
+             SECCIÓN 1: PROPÓSITO DE LA GUÍA
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">ℹ️</span>
+                <h2>PROPÓSITO DE ESTA GUÍA</h2>
+            </div>
+            <div style="padding: 24px;">
+                <p style="line-height: 1.8; color: var(--text-secondary);">
+                    Esta guía proporciona el <strong style="color: var(--accent-color);">roadmap completo</strong> para
+                    implementar el Sistema de Gestión de Calidad ISO 9001:2015 en MICSA desde cero hasta estar <strong
+                        style="color: var(--success-color);">100% preparados</strong> para contratar una casa auditora y
+                    <strong>obtener la certificación</strong>. El contenido está basado en mejores prácticas de
+                    consultoría y experiencia real en empresas industriales.
+                </p>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 2: REQUISITOS PREVIOS
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">⚠️</span>
+                <h2>REQUISITOS PREVIOS - ANTES DE EMPEZAR</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px;">
+                <!-- Columna izquierda: Compromiso de la Dirección -->
+                <div
+                    style="background: var(--input-bg); padding: 20px; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+                    <h4 style="color: var(--accent-color); margin-bottom: 16px;">📋 COMPROMISO DE LA DIRECCIÓN</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Aprobación formal del proyecto por
+                            Dirección General</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Asignación de presupuesto (ver
+                            sección 6 de costos)</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Designación de Representante de la
+                            Dirección</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Comunicado oficial a toda la
+                            organización</li>
+                    </ul>
+                </div>
+                <!-- Columna derecha: Equipo de Implementación -->
+                <div
+                    style="background: var(--input-bg); padding: 20px; border-radius: 12px; border-left: 4px solid var(--success-color);">
+                    <h4 style="color: var(--success-color); margin-bottom: 16px;">👥 EQUIPO DE IMPLEMENTACIÓN</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Director/Responsable de Calidad
+                            (líder del proyecto)</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Coordinador de Calidad (apoyo
+                            operativo)</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Representantes de cada área (1 por
+                            área mínimo)</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• Consideración de consultoría externa
+                            (opcional)</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Advertencia importante -->
+            <div
+                style="background: rgba(245, 158, 11, 0.15); border: 1px solid var(--warning-color); border-radius: 8px; padding: 16px; margin: 0 24px 24px;">
+                <strong style="color: var(--warning-color);">⚠️ IMPORTANTE: SIN ESTOS REQUISITOS, NO INICIAR LA
+                    IMPLEMENTACIÓN</strong>
+                <p style="color: var(--text-secondary); margin-top: 8px; font-size: 0.9rem;">La falta de compromiso real
+                    de la dirección es la causa #1 de fracaso en implementaciones ISO. Asegúrese de contar con recursos,
+                    tiempo y apoyo antes de proceder.</p>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 3: ROADMAP DE IMPLEMENTACIÓN (7 FASES)
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">🗺️</span>
+                <h2>ROADMAP DE IMPLEMENTACIÓN (12 MESES)</h2>
+            </div>
+            <div style="padding: 24px;">
+                <!-- Timeline visual con las 7 fases -->
+                <div class="timeline">
+
+                    <!-- FASE 1: Diagnóstico y Planificación -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 1: Diagnóstico y Planificación</span>
+                                <span class="phase-duration">Mes 1 - 2</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Análisis GAP vs ISO 9001:2015</li>
+                                <li>Definición del alcance del SGC</li>
+                                <li>Capacitación en requisitos ISO 9001</li>
+                                <li>Análisis de contexto y partes interesadas</li>
+                                <li>Creación de las conformidades y riesgos</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📄 Reporte GAP</span>
+                                <span class="deliverable-tag">📋 Definición SGC a diseñar</span>
+                                <span class="deliverable-tag">📊 Todos los KPI con fórmulas calculadas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 2: Documentación Base -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 2: Documentación Base</span>
+                                <span class="phase-duration">Mes 3 - 4</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Política y objetivos de calidad</li>
+                                <li>Manual del SGC (opcional pero recomendado)</li>
+                                <li>Procedimientos obligatorios</li>
+                                <li>Fichas de caracterización de procesos</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📄 Manual de Calidad</span>
+                                <span class="deliverable-tag">📋 26 Procedimientos</span>
+                                <span class="deliverable-tag">📊 Mapa de Procesos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 3: Implementación Operativa -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 3: Implementación Operativa</span>
+                                <span class="phase-duration">Mes 5 - 6</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Capacitación a todo el personal</li>
+                                <li>Distribución de políticas y objetivos</li>
+                                <li>Implementación de procedimientos en campo</li>
+                                <li>Guía enfocada en el contexto</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📄 Plan de Capacitación</span>
+                                <span class="deliverable-tag">📊 Registros de asistencia</span>
+                                <span class="deliverable-tag">✅ Evidencias de implementación</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 4: Generación de Registros -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 4: Generación de Registros</span>
+                                <span class="phase-duration">Mes 7 - 8</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Operación normal del sistema (2-3 meses mínimo)</li>
+                                <li>Generación de registros y evidencias</li>
+                                <li>Seguimiento de indicadores</li>
+                                <li>Cierre de no conformidades detectadas</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📋 21 Registros llenos</span>
+                                <span class="deliverable-tag">📊 Medición de KPIs</span>
+                                <span class="deliverable-tag">✅ Tablero de indicadores</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 5: Auditoría Interna -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 5: Auditoría Interna</span>
+                                <span class="phase-duration">Mes 9</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Formación de auditores internos</li>
+                                <li>Planificación y ejecución de auditoría</li>
+                                <li>Identificación de no conformidades</li>
+                                <li>Acciones correctivas</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📄 Informe de Auditoría</span>
+                                <span class="deliverable-tag">📋 Plan de acciones correctivas</span>
+                                <span class="deliverable-tag">✅ Auditores capacitados</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 6: Revisión por la Dirección -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">6</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 6: Revisión por la Dirección</span>
+                                <span class="phase-duration">Mes 10</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>Preparación de entradas para revisión</li>
+                                <li>Reunión formal con Dirección General</li>
+                                <li>Decisiones y salidas documentadas</li>
+                                <li>Ajustes finales al sistema</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">📄 Acta de Revisión</span>
+                                <span class="deliverable-tag">📊 Compromisos y mejoras</span>
+                                <span class="deliverable-tag">✅ SGC aprobado por Dirección</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 7: Certificación -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">7</div>
+                        <div class="timeline-content">
+                            <div class="phase-header">
+                                <span class="phase-title">FASE 7: Auditoría de Certificación</span>
+                                <span class="phase-duration">Mes 11 - 12</span>
+                            </div>
+                            <ul class="phase-activities">
+                                <li>AUDITORÍA DE CERTIFICACIÓN ETAPA 1 (documental)</li>
+                                <li>Cierre de hallazgos de etapa 1</li>
+                                <li>AUDITORÍA DE CERTIFICACIÓN ETAPA 2 (en sitio)</li>
+                                <li>Obtención del certificado ISO 9001:2015</li>
+                            </ul>
+                            <div class="deliverables">
+                                <span class="deliverable-tag">🏆 Informe Etapa 1</span>
+                                <span class="deliverable-tag">🏆 Informe Etapa 2</span>
+                                <span class="deliverable-tag">🎖️ CERTIFICADO ISO 9001:2015</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 4: DOCUMENTOS OBLIGATORIOS
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">📑</span>
+                <h2>DOCUMENTOS MÍNIMOS OBLIGATORIOS PARA AUDITORÍA</h2>
+            </div>
+            <div style="padding: 0 24px 24px;">
+                <!-- Nota importante sobre documentos obligatorios -->
+                <div
+                    style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger-color); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <strong style="color: var(--danger-color);">📌 NOTA: ISO 9001:2015 NO exige un "Manual de Calidad",
+                        pero SÍ requiere "información documentada" para demostrar conformidad. Los siguientes son
+                        documentos INDISPENSABLES que el auditor SOLICITARÁ:</strong>
+                </div>
+
+                <!-- Tabla de documentos obligatorios -->
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>Cláusula</th>
+                            <th>Documento Obligatorio</th>
+                            <th>Por Qué Es Obligatorio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4.3</td>
+                            <td>Alcance del SGC</td>
+                            <td>Requerido explícitamente por la norma</td>
+                        </tr>
+                        <tr>
+                            <td>5.2</td>
+                            <td>Política de Calidad</td>
+                            <td>Debe estar disponible como información documentada</td>
+                        </tr>
+                        <tr>
+                            <td>6.2</td>
+                            <td>Objetivos de Calidad</td>
+                            <td>Deben estar documentados (qué, recursos, responsable, plazo)</td>
+                        </tr>
+                        <tr>
+                            <td>7.1.5.1</td>
+                            <td>Recursos de Calibración de Equipos</td>
+                            <td>Evidencia de trazabilidad de mediciones</td>
+                        </tr>
+                        <tr>
+                            <td>7.2</td>
+                            <td>Evidencia de Competencias del Personal</td>
+                            <td>Registros que demuestren calificaciones y capacitación</td>
+                        </tr>
+                        <tr>
+                            <td>8.2.3.2</td>
+                            <td>Revisión de Requisitos del Cliente</td>
+                            <td>Evidencia de verificación antes de comprometerse</td>
+                        </tr>
+                        <tr>
+                            <td>8.3.3</td>
+                            <td>Entradas de Diseño y Desarrollo</td>
+                            <td>Requisito para gestión de información documental</td>
+                        </tr>
+                        <tr>
+                            <td>8.4</td>
+                            <td>Procedimiento de Control de Proveedores</td>
+                            <td>Para asegurar que proveedores cumplen requisitos</td>
+                        </tr>
+                        <tr>
+                            <td>8.5.1</td>
+                            <td>Información de Control de Producción</td>
+                            <td>Para reproducibilidad de producción/servicio</td>
+                        </tr>
+                        <tr>
+                            <td>8.6</td>
+                            <td>Registros de Liberación de Producto/Servicio</td>
+                            <td>Evidencia de conformidad con criterios</td>
+                        </tr>
+                        <tr>
+                            <td>9.2</td>
+                            <td>Programa de Auditoría Interna</td>
+                            <td>Requerido explícitamente</td>
+                        </tr>
+                        <tr>
+                            <td>10.2</td>
+                            <td>Registro de No Conformidades y Acciones</td>
+                            <td>CRÍTICO - se auditan extensivamente en ambas etapas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 5: CHECKLIST PRE-AUDITORÍA
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">✅</span>
+                <h2>CHECKLIST DE PREPARACIÓN PARA AUDITORÍA DE CERTIFICACIÓN</h2>
+            </div>
+            <div style="padding: 0 24px 24px;">
+                <p style="color: var(--warning-color); margin-bottom: 16px;">⚠️ <strong>VERIFICACIÓN FINAL
+                        PRE-AUDITORÍA</strong> (Usar 1 mes antes de Etapa 1)</p>
+
+                <!-- Checklist interactivo -->
+                <table class="checklist-table">
+                    <thead>
+                        <tr>
+                            <th class="check-col">✓</th>
+                            <th>Requisito a Verificar</th>
+                            <th>Responsable</th>
+                            <th>Evidencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checklistBody">
+                        <!-- Los items se cargan dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+
+                <!-- Barra de progreso del checklist -->
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text-secondary);">Progreso del Checklist</span>
+                        <span id="checklistProgress" style="color: var(--success-color); font-weight: 600;">0%</span>
+                    </div>
+                    <div style="background: var(--card-border); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div id="progressBar"
+                            style="background: var(--gradient-primary); height: 100%; width: 0%; transition: width 0.3s ease;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 6: INVERSIÓN ESTIMADA
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">💰</span>
+                <h2>INVERSIÓN ESTIMADA EN CERTIFICACIÓN ISO 9001:2015</h2>
+            </div>
+            <div style="padding: 0 24px 24px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 16px;">COSTOS DE IMPLEMENTACIÓN (Primera vez)</h4>
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Costo (MXN)</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Consultoría externa (opcional)</td>
+                            <td>$60,000 - $250,000</td>
+                            <td>Depende de tamaño de empresa y alcance</td>
+                        </tr>
+                        <tr>
+                            <td>Capacitación de personal</td>
+                            <td>$20,000 - $60,000</td>
+                            <td>Cursos ISO 9001, auditor interno</td>
+                        </tr>
+                        <tr>
+                            <td>Calibración de equipos</td>
+                            <td>$10,000 - $40,000</td>
+                            <td>Según cantidad de instrumentos de medición</td>
+                        </tr>
+                        <tr>
+                            <td>Software de gestión (opcional)</td>
+                            <td>$30,000 - $80,000</td>
+                            <td>Plataformas de digitalización, control documental</td>
+                        </tr>
+                        <tr>
+                            <td>Mejoras de infraestructura</td>
+                            <td>Variable</td>
+                            <td>Si se identifican gaps en ambiente de trabajo</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="color: var(--text-primary); margin: 24px 0 16px;">COSTOS DE CERTIFICACIÓN (Casa Auditora)
+                </h4>
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Rango de Costo (MXN)</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Auditoría Inicial (Etapa 1 + Etapa 2)</td>
+                            <td>$65,000 - $150,000</td>
+                            <td>Varía según organismo, tamaño empresa y días auditor</td>
+                        </tr>
+                        <tr>
+                            <td>Auditorías de seguimiento (c/ año x2)</td>
+                            <td>$30,000 - $70,000</td>
+                            <td>Costo anual para mantener la vigencia del certificado</td>
+                        </tr>
+                        <tr>
+                            <td>RECERTIFICACIÓN (cada 3 años)</td>
+                            <td>$50,000 - $120,000</td>
+                            <td>Similar a auditoría inicial</td>
+                        </tr>
+                        <tr class="cost-total">
+                            <td><strong>INVERSIÓN TOTAL ESTIMADA (Año 1)</strong></td>
+                            <td><strong>$185,000 - $570,000</strong></td>
+                            <td>Incluye todo: implementación + certificación + consultoría</td>
+                        </tr>
+                        <tr>
+                            <td>TOTAL (sin consultoría, con equipo interno)</td>
+                            <td>$105,000 - $325,000</td>
+                            <td>Solo costos de certificación directos</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ROI de la certificación -->
+                <div
+                    style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success-color); border-radius: 12px; padding: 20px; margin-top: 24px;">
+                    <h4 style="color: var(--success-color); margin-bottom: 12px;">💹 RETORNO DE INVERSIÓN (ROI)</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Acceso a
+                                licitaciones:</strong> Muchas licitaciones requieren ISO 9001 como requisito obligatorio
+                        </li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Ventaja
+                                competitiva:</strong> Diferenciación frente a competidores no certificados</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Reducción de
+                                costos:</strong> Menos reprocesos, desperdicio y reclamos</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Mejora de imagen:</strong>
+                            Confianza de clientes y posicionamiento de marca</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Eficiencia
+                                operativa:</strong> Procesos estandarizados y controlados</li>
+                        <li style="padding: 8px 0; color: var(--text-secondary);">• <strong>Expansión
+                                internacional:</strong> Reconocimiento global del certificado</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 7: MEJORES PRÁCTICAS
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">💡</span>
+                <h2>MEJORES PRÁCTICAS Y RECOMENDACIONES DEL CONSULTOR SENIOR</h2>
+            </div>
+            <div class="practices-grid">
+                <!-- Columna: Lo que SÍ hacer -->
+                <div class="do-column">
+                    <h4>✅ LO QUE SÍ HACER</h4>
+                    <ul class="practice-list">
+                        <li>Involucrar a la dirección desde el día 1</li>
+                        <li>Simplificar la documentación: Solo lo necesario, nada más</li>
+                        <li>Implementar por fases: No todo a la vez, generar procesos paulatinos</li>
+                        <li>Capacitar constantemente: Personal convencido = sistema exitoso</li>
+                        <li>Generar evidencias reales: No "crear" registros al final</li>
+                        <li>Hacer auditorías internas serias: No simuladas, buscar mejoras reales</li>
+                        <li>Usar herramientas digitales: Facilita el control y acceso a documentos</li>
+                        <li>Integrar ISO con operación diaria: No verlo como "carga de trabajo"</li>
+                    </ul>
+                </div>
+                <!-- Columna: Lo que NO hacer -->
+                <div class="dont-column">
+                    <h4>❌ LO QUE NO HACER</h4>
+                    <ul class="practice-list">
+                        <li>NO copiar documentos de otras empresas: Cada SGC es único</li>
+                        <li>NO crear documentación excesiva: "Papeles" ≠ calidad</li>
+                        <li>NO dejar todo para el final: Los registros deben ser de meses</li>
+                        <li>NO asignar responsabilidades ambiguas: "Todos" = nadie</li>
+                        <li>NO descuidar no conformidades: Es mejor: Las encontramos y corregimos</li>
+                        <li>NO elegir organismo por precio bajo: Buscar calidad y reputación</li>
+                        <li>NO olvidar RPN: Registros o no pasó. El auditor pedirá evidencias</li>
+                        <li>NO falsificar registros: Es fraude y causa descertificación</li>
+                        <li>NO relajarse post-certificación: Auditorías de seguimiento son exigentes</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 8: CRONOGRAMA VISUAL (12 MESES)
+             ============================================ -->
+        <section class="form-section">
+            <div class="section-header">
+                <span class="section-number">📅</span>
+                <h2>CRONOGRAMA VISUAL DE IMPLEMENTACIÓN (12 MESES)</h2>
+            </div>
+            <div style="padding: 24px;">
+                <!-- Encabezados de meses -->
+                <div class="gantt-visual" style="margin-bottom: 10px;">
+                    <div class="gantt-month">MES 1</div>
+                    <div class="gantt-month">MES 2</div>
+                    <div class="gantt-month">MES 3</div>
+                    <div class="gantt-month">MES 4</div>
+                    <div class="gantt-month">MES 5</div>
+                    <div class="gantt-month">MES 6</div>
+                    <div class="gantt-month">MES 7</div>
+                    <div class="gantt-month">MES 8</div>
+                    <div class="gantt-month">MES 9</div>
+                    <div class="gantt-month">MES 10</div>
+                    <div class="gantt-month">MES 11</div>
+                    <div class="gantt-month">MES 12</div>
+                </div>
+                <!-- Barras de Gantt por fase -->
+                <div class="gantt-visual">
+                    <div class="gantt-bar gantt-fase1" style="grid-column: span 2;">FASE 1<br>Diagnóstico</div>
+                    <div class="gantt-bar gantt-fase2" style="grid-column: span 2;">FASE 2<br>Documentación</div>
+                    <div class="gantt-bar gantt-fase3" style="grid-column: span 2;">FASE 3<br>Implementación</div>
+                    <div class="gantt-bar gantt-fase4" style="grid-column: span 2;">FASE 4<br>Registros</div>
+                    <div class="gantt-bar gantt-fase5" style="grid-column: span 1;">F5<br>Audit</div>
+                    <div class="gantt-bar gantt-fase6" style="grid-column: span 1;">F6<br>Rev</div>
+                    <div class="gantt-bar gantt-fase7" style="grid-column: span 2;">FASE 7<br>CERTIFICACIÓN</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN 9: RESUMEN EJECUTIVO
+             ============================================ -->
+        <section class="form-section" style="background: var(--gradient-header);">
+            <div class="section-header"
+                style="background: transparent; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <span class="section-number">🏆</span>
+                <h2>RESUMEN EJECUTIVO: RUTA A LA CERTIFICACIÓN ISO 9001:2015</h2>
+            </div>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-number">12</div>
+                    <div class="summary-label">Meses de Implementación</div>
+                </div>
+                <div class="summary-card" style="background: linear-gradient(135deg, #059669, #10b981);">
+                    <div class="summary-number">87</div>
+                    <div class="summary-label">Documentos del SGC</div>
+                </div>
+                <div class="summary-card" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">
+                    <div class="summary-number">3</div>
+                    <div class="summary-label">Años de Vigencia</div>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                <p>✓ MICSA cuenta ya con: Reporte Diario de Obra (SGC-FO-031) + Matriz de Documentación completa</p>
+                <p>✓ Próximos pasos: Iniciar FASE 1 (Diagnóstico GAP) → Desarrollar documentación faltante</p>
+                <p>✓ Meta: Certificación ISO 9001:2015 lista para auditoría casa auditora en 12 meses</p>
+            </div>
+        </section>
+
+        <!-- ============================================
+             BOTONES DE NAVEGACIÓN
+             ============================================ -->
+        <div class="action-buttons">
+            <a href="../../index.html" class="btn btn-secondary">🏠 Ir al Dashboard</a>
+            <a href="reporte-diario.html" class="btn btn-primary">📋 Reporte Diario</a>
+            <a href="matriz-iso.html" class="btn btn-success">📊 Matriz de Documentos</a>
+        </div>
+
+        <!-- ============================================
+             PIE DE PÁGINA
+             ============================================ -->
+        <footer style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem;">
+            <p>DOCUMENTO CONTROLADO - PROPIEDAD DE MICSA SOLUCIONES INDUSTRIALES</p>
+            <p>Sistema Integrado de Gestión de Calidad ISO 9001:2015 | Versión de Documentación v1.3</p>
+            <p>Autorizado por: Consultor Senior en Sistemas de Gestión de Calidad | 13 de Enero de 2026</p>
+        </footer>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT: FUNCIONALIDAD DEL CHECKLIST
+         ============================================ -->
+    <script>
+        const API_URL = '/api';
+
+        /**
+         * DATOS DEL CHECKLIST PRE-AUDITORÍA
+         * Cada item contiene el requisito a verificar, responsable y evidencia requerida
+         */
+        const checklistItems = [
+            { requisito: "Alcance del SGC definido, documentado y disponible", responsable: "Dir. Calidad", evidencia: "SGC-RG-003" },
+            { requisito: "Política de Calidad publicada, comunicada y comprendida por el personal", responsable: "Dir. General", evidencia: "SGC-PO-001 + Registros" },
+            { requisito: "Objetivos de Calidad establecidos, medibles y con seguimiento en el período (3 meses)", responsable: "Dir. Calidad", evidencia: "SGC-RG-007, SGC-FO-002" },
+            { requisito: "Análisis de contexto y partes interesadas actualizados", responsable: "Dir. General", evidencia: "SGC-RG-001, SGC-RG-002 +" },
+            { requisito: "Matriz de riesgos y oportunidades con planes de acción implementados", responsable: "Dir. Calidad", evidencia: "SGC-RG-006 + Evidencia de planes" },
+            { requisito: "Mapa de procesos con interacciones claras, entradas/salidas y criterios", responsable: "Dir. Calidad", evidencia: "SGC-RG-004, SGC-FO-001" },
+            { requisito: "87 documentos del SGC controlados y distribuidos correctamente", responsable: "Coord. Calidad", evidencia: "SGC-RG-012" },
+            { requisito: "Registros de producción desde mínimo últimos 2-3 meses (documentados)", responsable: "Dir. Operaciones", evidencia: "SGC-RG-014, SGC-FO-031" },
+            { requisito: "Equipos de medición calibrados con certificados válidos vigentes", responsable: "Coord. Calidad", evidencia: "SGC-RG-009, Certificados lab." },
+            { requisito: "Matriz de competencias actualizada con evidencias de capacitación", responsable: "Jefe RRHH", evidencia: "SGC-RG-010, Diplomas, constancias" },
+            { requisito: "Procedimiento de compras implementado con evaluación de proveedores documentada", responsable: "Jefe Compras", evidencia: "SGC-PR-014, SGC-RG-013, SGC-RG-021" },
+            { requisito: "Procedimiento de no conformidades con mínimo 3-5 registradas y cerradas con eficacia", responsable: "Dir. Calidad", evidencia: "SGC-PR-019, SGC-RG-015" },
+            { requisito: "Auditoría interna realizada (completa o por muestreo) con hallazgos y plan de acciones", responsable: "Auditor Líder", evidencia: "SGC-PG-002, SGC-FO-019-021" },
+            { requisito: "Revisión por la dirección realizada con acta de compromisos firmada", responsable: "Dir. General", evidencia: "SGC-RG-018, Acta firmada" },
+            { requisito: "Indicadores de desempeño (KPI) con métricas y análisis", responsable: "Dir. Calidad", evidencia: "SGC-RG-017" },
+            { requisito: "Evidencia de capacitaciones en ISO 9001 y toma de conciencia", responsable: "Jefe RRHH", evidencia: "Listas de asistencia, exámenes, fotos" },
+            { requisito: "Procedimiento de diseño implementado (si aplica) con registros de proyectos", responsable: "Jefe Ingeniería", evidencia: "SGC-PR-013, SGC-FO-008 a 012" },
+            { requisito: "Comunicación con cliente documentada (cotizaciones, OT, quejas, encuestas)", responsable: "Jefe Comercial", evidencia: "SGC-FO-004 a 007, SGC-FO-018, 025" },
+        ];
+
+        /**
+         * FUNCIÓN: Cargar el checklist en la tabla
+         * Se ejecuta al cargar la página para llenar la tabla con los items
+         */
+        function loadChecklist() {
+            const tbody = document.getElementById('checklistBody');
+
+            // Iterar sobre cada item del checklist
+            checklistItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="check-col">
+                        <input type="checkbox" id="check${index}" onchange="updateProgress()">
+                    </td>
+                    <td>${item.requisito}</td>
+                    <td>${item.responsable}</td>
+                    <td><code style="font-size: 0.8rem;">${item.evidencia}</code></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        /**
+         * FUNCIÓN: Actualizar la barra de progreso del checklist
+         * Calcula el porcentaje de items completados y actualiza la UI
+         */
+        function updateProgress() {
+            // Contar checkboxes marcados
+            const total = checklistItems.length;
+            const checked = document.querySelectorAll('#checklistBody input[type="checkbox"]:checked').length;
+            const percentage = Math.round((checked / total) * 100);
+
+            // Actualizar el texto del porcentaje
+            document.getElementById('checklistProgress').textContent = percentage + '%';
+
+            // Actualizar el ancho de la barra de progreso
+            document.getElementById('progressBar').style.width = percentage + '%';
+
+            // Cambiar color si está completo
+            if (percentage === 100) {
+                document.getElementById('checklistProgress').style.color = '#10b981';
+            }
+
+            // Guardar progreso en localStorage para persistencia
+            saveChecklistProgress();
+        }
+
+        /**
+         * FUNCIÓN: Guardar progreso del checklist en el servidor
+         */
+        async function saveChecklistProgress() {
+            const checkboxes = document.querySelectorAll('#checklistBody input[type="checkbox"]');
+            const progress = [];
+
+            checkboxes.forEach((cb, index) => {
+                progress.push(cb.checked);
+            });
+
+            const checked = progress.filter(item => item === true).length;
+            const percentage = Math.round((checked / checklistItems.length) * 100);
+
+            try {
+                await fetch(`${API_URL}/iso-progress`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        percentage: percentage,
+                        checklist: progress
+                    })
+                });
+            } catch (error) {
+                console.error('Error al guardar progreso en el servidor:', error);
+                // Fallback local
+                localStorage.setItem('MICSA_Checklist_Progress', JSON.stringify(progress));
+            }
+        }
+
+        /**
+         * FUNCIÓN: Cargar progreso guardado del servidor
+         */
+        async function loadChecklistProgress() {
+            try {
+                const response = await fetch(`${API_URL}/iso-progress`);
+                const data = await response.json();
+
+                if (data && data.checklist_data) {
+                    const progress = data.checklist_data;
+                    const checkboxes = document.querySelectorAll('#checklistBody input[type="checkbox"]');
+
+                    checkboxes.forEach((cb, index) => {
+                        if (progress[index]) {
+                            cb.checked = true;
+                        }
+                    });
+
+                    updateProgress(); // Solo actualiza UI
+                } else {
+                    // Fallback local si no hay datos en el servidor
+                    const saved = localStorage.getItem('MICSA_Checklist_Progress');
+                    if (saved) {
+                        const progress = JSON.parse(saved);
+                        const checkboxes = document.querySelectorAll('#checklistBody input[type="checkbox"]');
+                        checkboxes.forEach((cb, index) => {
+                            if (progress[index]) cb.checked = true;
+                        });
+                        updateProgress();
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar progreso del servidor:', error);
+            }
+        }
+
+        /**
+         * INICIALIZACIÓN
+         * Se ejecuta cuando el DOM está completamente cargado
+         */
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cargar los items del checklist en la tabla
+            loadChecklist();
+
+            // Restaurar progreso guardado si existe
+            loadChecklistProgress();
+
+            console.log('📘 Guía de Implementación ISO 9001:2015 cargada correctamente');
+        });
+    </script>
+</body>
+
+</html> correlo

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Tesorería y Bancos</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .bank-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .bank-card {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bank-card::after {
+            content: 'BANK';
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            font-size: 5rem;
+            font-weight: 900;
+            opacity: 0.1;
+        }
+
+        .bank-balance {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 15px 0;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .transaction-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--card-border);
+            color: var(--text-muted);
+        }
+
+        .transaction-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .pos {
+            color: var(--verde-micsa);
+        }
+
+        .neg {
+            color: var(--rojo-micsa);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="contador-hub.html" class="back-link">← Herramientas Contador</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">🏦</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Gestión de Tesorería y Flujo</p>
+            </div>
+            <div class="header-info">
+                <h1>TESORERÍA Y BANCOS</h1>
+                <p>Monitoreo de Saldos y Conciliación Bancaria</p>
+            </div>
+        </header>
+
+        <div class="bank-grid">
+            <div>
+                <div class="bank-card">
+                    <p style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;">Saldo Disponible (102
+                        Bancos)</p>
+                    <h2 class="bank-balance" id="mainBankBalance">$0.00</h2>
+                    <p id="bankLastUpdate">Actualizado al día de hoy</p>
+                </div>
+
+                <div class="repse-kpi-card" style="margin-top: 20px; text-align: left;">
+                    <h3>Acciones de Tesorería</h3>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">Conciliar Estado de
+                        Cuenta</button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;">Programar Pagos</button>
+                </div>
+            </div>
+
+            <div class="repse-kpi-card" style="text-align: left;">
+                <div class="report-section-title">Últimos Movimientos Bancarios</div>
+                <table class="transaction-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto / Referencia</th>
+                            <th style="text-align: right;">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bankTransactionsBody">
+                        <!-- JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Treasury Management System</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTreasury);
+
+        async function loadTreasury() {
+            try {
+                // Obtenemos balance de la cuenta 102
+                const resBalance = await fetch('/api/accounting/reports/balance?date=' + new Date().toISOString().split('T')[0]);
+                const dataBalance = await resBalance.json();
+
+                const bankAcc = dataBalance.find(a => a.code === '102');
+                if (bankAcc) {
+                    document.getElementById('mainBankBalance').textContent = formatCurrency(bankAcc.balance);
+                }
+
+                // Cargaremos el auxiliar de la cuenta 102 (si existe el endpoint)
+                const start = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+                const end = new Date().toISOString().split('T')[0];
+
+                const resAux = await fetch(`/api/accounting/auxiliary?accountId=1&start=${start}&end=${end}`); // Hardcoded ID 1 para Bancos por ahora
+                const moves = await resAux.json();
+
+                const tbody = document.getElementById('bankTransactionsBody');
+                tbody.innerHTML = '';
+
+                moves.forEach(m => {
+                    const amount = m.debit - m.credit;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${m.date}</td>
+                        <td><strong>${m.concept}</strong><br><small style="color:var(--text-muted)">${m.description}</small></td>
+                        <td style="text-align: right;" class="${amount >= 0 ? 'pos' : 'neg'}">
+                            ${formatCurrency(amount)}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (moves.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 20px;">No hay movimientos recientes.</td></tr>';
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v);
+        }
+    </script>
+</body>
+
+</html>

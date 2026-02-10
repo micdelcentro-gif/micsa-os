@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MICSA - Dashboard del Contador</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Auth & Permissions -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        .accountant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .tool-card i {
+            font-size: 2.5rem;
+        }
+
+        .tool-card h3 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .tool-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .tool-card .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <a href="../../index.html" class="back-link">← Dashboard</a>
+                <div class="logo" style="margin-top: 10px;">
+                    <span class="logo-icon">💼</span>
+                    <span class="logo-text">MICSA OS</span>
+                </div>
+                <p class="logo-subtitle">Módulo de Contabilidad y Fiscal</p>
+            </div>
+            <div class="header-info">
+                <h1>HERRAMIENTAS DEL CONTADOR</h1>
+                <p>Gestión Integral de Pólizas, Impuestos y Auditoría</p>
+            </div>
+        </header>
+
+        <div class="accountant-grid">
+            <!-- Balanza de Comprobación -->
+            <a href="balanza-comprobacion.html" class="tool-card">
+                <span style="font-size: 2.5rem;">⚖️</span>
+                <h3>Balanza de Comprobación</h3>
+                <p>Verifica que tus asientos contables estén cuadrados en cualquier periodo de tiempo.</p>
+                <span class="badge">SGC ISO 9001</span>
+            </a>
+
+            <!-- Estados Financieros -->
+            <a href="estados-financieros.html" class="tool-card">
+                <span style="font-size: 2.5rem;">📊</span>
+                <h3>Estados Financieros</h3>
+                <p>Genera P&L y Balance General en tiempo real basados en la facturación y nómina.</p>
+            </a>
+
+            <!-- Nómina -->
+            <a href="nomina.html" class="tool-card">
+                <span style="font-size: 2.5rem;">💸</span>
+                <h3>Nómina y Timbrado</h3>
+                <p>Procesamiento masivo de recibos, timbrado masivo y generación de pólizas de gasto.</p>
+                <span class="badge">PYME</span>
+            </a>
+
+            <!-- Egresos -->
+            <a href="egresos.html" class="tool-card">
+                <span style="font-size: 2.5rem;">💸</span>
+                <h3>Control de Egresos</h3>
+                <p>Monitorea y categoriza los gastos operativos, compras a proveedores y servicios.</p>
+            </a>
+
+            <!-- Tesorería -->
+            <a href="tesoreria.html" class="tool-card">
+                <span style="font-size: 2.5rem;">🏦</span>
+                <h3>Tesorería (Bancos)</h3>
+                <p>Gestión de flujo de efectivo, saldos en bancos y conciliación de pagos.</p>
+                <span class="badge">CASH FLOW</span>
+            </a>
+
+            <!-- Auditoría -->
+            <a href="auditoria.html" class="tool-card">
+                <span style="font-size: 2.5rem;">🕵️‍♂️</span>
+                <h3>Auditoría e Integridad</h3>
+                <p>Cruces inteligentes entre XMLs recibidos vs pólizas registradas. Detección de faltantes.</p>
+                <span class="badge">CONTROL</span>
+            </a>
+
+            <!-- Sicofi Integration -->
+            <a href="sicofi-config.html" class="tool-card"
+                style="border-color: #2563eb; background: rgba(37, 99, 235, 0.05);">
+                <span style="font-size: 2.5rem;">🔗</span>
+                <h3>Conexión Sicofi</h3>
+                <p>Gestiona tu cuenta de timbrado y revisa el estatus de conexión con los servidores del SAT.</p>
+                <span class="badge" style="background: #2563eb;">API CONNECT</span>
+            </a>
+
+            <!-- Datos Maestros -->
+            <a href="datos-maestros.html" class="tool-card">
+                <span style="font-size: 2.5rem;">🗂️</span>
+                <h3>Datos Maestros</h3>
+                <p>Configura el Catálogo de Cuentas, Entidades Fiscales y asignaciones de centros de costo.</p>
+                <span class="badge">CONFIG</span>
+            </a>
+        </div>
+
+        <div class="repse-kpi-card" style="margin-top: 40px; text-align: left;">
+            <div class="report-section-title">Aviso de Auditoría Automática</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                El sistema realiza una validación diaria de integridad de datos. Todas las pólizas generadas
+                automáticamente por el motor de XML cumplen con el estándar del **Anexo 24 del SAT**.
+            </p>
+        </div>
+
+        <footer class="footer" style="margin-top: 50px;">
+            <p>MICSA OS - Accountant Tools | Powered by Contalink Sync Engine</p>
+        </footer>
+    </div>
+</body>
+
+</html>
