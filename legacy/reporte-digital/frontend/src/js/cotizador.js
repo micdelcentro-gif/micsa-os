@@ -316,7 +316,8 @@ function calculateSummary() {
 
     const additionalMaterials = parseFloat(document.getElementById('additionalMaterials')?.value) || 0;
     const toolsCost = parseFloat(document.getElementById('toolsCost')?.value) || 0;
-    const totalMaterials = materialsCost + additionalMaterials + toolsCost;
+    const shippingCost = parseFloat(document.getElementById('shippingCost')?.value) || 0;
+    const totalMaterials = materialsCost + additionalMaterials + toolsCost + shippingCost;
 
     // Logistics (only if FORANEO)
     let logisticsCost = 0;
@@ -328,7 +329,7 @@ function calculateSummary() {
         logisticsCost = viaticos + hotel + transport;
     }
 
-    // Direct cost
+    // Direct cost (company cost)
     const directCost = totalLabor + imssCost + eppCost + equipmentCost + totalMaterials + logisticsCost;
 
     // Margins
@@ -343,6 +344,9 @@ function calculateSummary() {
     const ivaCost = basePrice * 0.16;
     const totalPrice = basePrice + ivaCost;
 
+    // Update profit analysis (if unlocked)
+    updateProfitAnalysis(directCost, basePrice, adminCost, profitCost);
+
     // Store in global for PDF
     window.calculatedQuote = {
         laborCost: totalLabor,
@@ -350,6 +354,7 @@ function calculateSummary() {
         eppCost,
         equipmentCost,
         materialsCost: totalMaterials,
+        shippingCost,
         logisticsCost,
         directCost,
         adminCost,
@@ -521,6 +526,7 @@ function generatePDF() {
         ['EPP y Seguridad', formatCurrency(calc.eppCost)],
         ['Equipos y Maquinaria', formatCurrency(calc.equipmentCost)],
         ['Materiales y Consumibles', formatCurrency(calc.materialsCost)],
+        ['Costo de Envío', formatCurrency(calc.shippingCost)],
         ['Logística y Viáticos', formatCurrency(calc.logisticsCost)]
     ];
 
@@ -704,5 +710,58 @@ async function saveQuote() {
     } catch (error) {
         console.error('Error:', error);
         alert('❌ Error al guardar la cotización');
+    }
+}
+
+// ============================================
+// PASSWORD PROTECTION FOR MARGINS
+// ============================================
+function unlockMargins() {
+    const password = document.getElementById('marginPassword').value;
+    const correctPassword = 'admin123'; // You can change this to a more secure password
+    
+    if (password === correctPassword) {
+        document.getElementById('marginPasswordSection').style.display = 'none';
+        document.getElementById('marginConfigSection').style.display = 'block';
+        calculateSummary(); // Refresh to show profit analysis
+        alert('✅ Márgenes desbloqueados correctamente');
+    } else {
+        alert('❌ Contraseña incorrecta');
+        document.getElementById('marginPassword').value = '';
+        document.getElementById('marginPassword').focus();
+    }
+}
+
+// ============================================
+// PROFIT ANALYSIS
+// ============================================
+function updateProfitAnalysis(companyCost, sellingPrice, adminCost, profitCost) {
+    // Only update if margins are unlocked
+    const marginSection = document.getElementById('marginConfigSection');
+    if (!marginSection || marginSection.style.display === 'none') {
+        return;
+    }
+
+    const realProfit = sellingPrice - companyCost;
+    const profitPercentage = companyCost > 0 ? ((realProfit / companyCost) * 100).toFixed(2) : 0;
+
+    // Update display elements
+    document.getElementById('companyCost').textContent = formatCurrency(companyCost);
+    document.getElementById('sellingPrice').textContent = formatCurrency(sellingPrice);
+    document.getElementById('realProfit').textContent = formatCurrency(realProfit);
+    document.getElementById('profitPercentage').textContent = profitPercentage + '%';
+    
+    // Update progress bar
+    const profitBar = document.getElementById('profitBar');
+    const barWidth = Math.min(profitPercentage, 100); // Cap at 100%
+    profitBar.style.width = barWidth + '%';
+    
+    // Change color based on profit margin
+    if (profitPercentage < 10) {
+        profitBar.style.background = 'linear-gradient(90deg, #ef4444, #f97316)'; // Red to orange
+    } else if (profitPercentage < 20) {
+        profitBar.style.background = 'linear-gradient(90deg, #f97316, #fbbf24)'; // Orange to yellow
+    } else {
+        profitBar.style.background = 'linear-gradient(90deg, #3b82f6, #10b981)'; // Blue to green
     }
 }
