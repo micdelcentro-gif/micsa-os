@@ -29,6 +29,18 @@ export const getReports = async () => {
   return data
 }
 
+// Endpoints de Empleados
+export const getEmpleados = async (proyectoId?: string) => {
+  const url = proyectoId ? `/empleados/?proyecto_id=${proyectoId}` : '/empleados/'
+  const { data } = await modernApi.get(url)
+  return data
+}
+
+export const getEmpleadoStats = async () => {
+  const { data } = await modernApi.get('/empleados/stats')
+  return data
+}
+
 // Legal Endpoints
 export const getLegalStats = async () => {
   const { data } = await modernApi.get('/legal/stats/summary')
