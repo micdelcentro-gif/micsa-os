@@ -14,9 +14,9 @@ class ProyectoCreate(BaseModel):
 
 class ProyectoResponse(ProyectoBase):
     id: str
-    cotizacion_id: str
-    cliente_id: str
-    created_at: datetime
+    cotizacion_id: Optional[str] = None
+    cliente_id: Optional[str] = None
+    created_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True
