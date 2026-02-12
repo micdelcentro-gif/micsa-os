@@ -10,7 +10,9 @@ const api = axios.create({
 })
 
 // Modern Backend (FastAPI)
-const MODERN_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const MODERN_API_URL = typeof window === 'undefined' 
+  ? 'http://localhost:8000/api/v1'  // Server-side
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1')  // Client-side
 
 const modernApi = axios.create({
   baseURL: MODERN_API_URL,
@@ -95,6 +97,61 @@ export const uploadComplianceDocument = async (id: string, category: string, fie
 
 export const sendComplianceExpediente = async (id: string) => {
   const { data } = await modernApi.post(`/compliance/${id}/send`)
+  return data
+}
+
+// Firmas Electrónicas Endpoints
+export const getFirmasStats = async () => {
+  const { data } = await modernApi.get('/firmas/stats')
+  return data
+}
+
+export const getDocumentosFirma = async () => {
+  const { data } = await modernApi.get('/firmas/')
+  return data
+}
+
+export const getDocumentoFirma = async (id: string) => {
+  const { data } = await modernApi.get(`/firmas/${id}`)
+  return data
+}
+
+export const createDocumentoFirma = async (formData: FormData) => {
+  const { data } = await modernApi.post('/firmas/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return data
+}
+
+export const updateDocumentoFirma = async (id: string, update: any) => {
+  const { data } = await modernApi.put(`/firmas/${id}`, update)
+  return data
+}
+
+export const cancelDocumentoFirma = async (id: string) => {
+  const { data } = await modernApi.post(`/firmas/${id}/cancel`)
+  return data
+}
+
+export const enviarNotificacionesFirma = async (id: string) => {
+  const { data } = await modernApi.post(`/firmas/${id}/enviar`)
+  return data
+}
+
+export const getDocumentoPublico = async (token: string) => {
+  const { data } = await modernApi.get(`/firmas/publico/${token}`)
+  return data
+}
+
+export const registrarFirma = async (token: string, firmaData: any) => {
+  const { data } = await modernApi.post(`/firmas/publico/${token}/firmar`, firmaData)
+  return data
+}
+
+export const marcarVisto = async (token: string) => {
+  const { data } = await modernApi.post(`/firmas/publico/${token}/visto`)
   return data
 }
 

@@ -6,3 +6,4 @@ from .epp import EppItem
 from .legal import ExpedienteLegal, MovimientoLegal
 from .empleado import Empleado, EmpleadoDocumento
 from .compliance import ComplianceExpediente
+from .firma_electronica import DocumentoFirma, Firmante, HistorialFirma

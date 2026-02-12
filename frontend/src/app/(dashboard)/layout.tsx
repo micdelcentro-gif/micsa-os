@@ -109,6 +109,9 @@ export default function DashboardLayout({
         { name: 'Tesorería', href: '/legacy/tesoreria', icon: '🏦' },
         { name: 'Egresos', href: '/legacy/egresos', icon: '💸' },
         { name: 'Cumplimiento SEIL', href: '/cumplimiento-seil', icon: '✅', badge: 'Nuevo' },
+        { name: 'REPSE Regulatorio', href: '/legacy/repse', icon: '📋', badge: 'STPS' },
+        { name: 'Cumplimiento Regulatorio', href: '/cumplimiento-regulatorio', icon: '📊', badge: 'SEIL' },
+        { name: 'Firmas Electrónicas', href: '/firmas-electronicas', icon: '✍️', badge: 'Nuevo' },
       ]
     },
     {

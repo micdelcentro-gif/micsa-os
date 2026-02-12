@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.core.database import Base, engine
 
 # Import routers
-from app.api.endpoints import clientes, cotizaciones, proyectos, epp, dashboard, notifications, legal, empleados, compliance
+from app.api.endpoints import clientes, cotizaciones, proyectos, epp, dashboard, notifications, legal, empleados, compliance, firmas
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -69,13 +69,21 @@ app.include_router(
     tags=["Dirección - Legal"]
 )
 
-app.include_router(empleados.router, prefix="/api/v1/empleados", tags=["Empleados"])
+app.include_router(
+    empleados.router, prefix="/api/v1/empleados", tags=["Empleados"])
 
 app.include_router(
     compliance.router,
     prefix=f"{settings.API_V1_STR}/compliance",
     tags=["Contabilidad - Cumplimiento SEIL"]
 )
+
+app.include_router(
+    firmas.router,
+    prefix=f"{settings.API_V1_STR}/firmas",
+    tags=["Contabilidad - Firmas Electrónicas"]
+)
+
 
 @app.get("/")
 async def root():
@@ -85,6 +93,7 @@ async def root():
         "docs": f"{settings.API_V1_STR}/docs",
         "company": settings.EMPRESA_NOMBRE
     }
+
 
 @app.get("/health")
 async def health_check():
