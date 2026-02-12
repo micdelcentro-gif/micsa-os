@@ -5,7 +5,7 @@ from app.core.config import settings
 from app.core.database import Base, engine
 
 # Import routers
-from app.api.endpoints import clientes, cotizaciones, proyectos, epp, dashboard, notifications, legal
+from app.api.endpoints import clientes, cotizaciones, proyectos, epp, dashboard, notifications, legal, empleados, compliance
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -67,6 +67,14 @@ app.include_router(
     legal.router,
     prefix=f"{settings.API_V1_STR}/legal",
     tags=["Dirección - Legal"]
+)
+
+app.include_router(empleados.router, prefix="/api/v1/empleados", tags=["Empleados"])
+
+app.include_router(
+    compliance.router,
+    prefix=f"{settings.API_V1_STR}/compliance",
+    tags=["Contabilidad - Cumplimiento SEIL"]
 )
 
 @app.get("/")

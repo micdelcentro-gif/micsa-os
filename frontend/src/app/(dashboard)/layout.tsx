@@ -108,6 +108,7 @@ export default function DashboardLayout({
         { name: 'Estados Financieros', href: '/legacy/estados-financieros', icon: '📊' },
         { name: 'Tesorería', href: '/legacy/tesoreria', icon: '🏦' },
         { name: 'Egresos', href: '/legacy/egresos', icon: '💸' },
+        { name: 'Cumplimiento SEIL', href: '/cumplimiento-seil', icon: '✅', badge: 'Nuevo' },
       ]
     },
     {

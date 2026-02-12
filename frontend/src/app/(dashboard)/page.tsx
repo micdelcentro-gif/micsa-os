@@ -80,6 +80,7 @@ const moduleSections: ModuleSection[] = [
       { name: 'Tesorería', href: '/legacy/tesoreria', icon: '🏦', description: 'Flujo de efectivo' },
       { name: 'Egresos', href: '/legacy/egresos', icon: '💸', description: 'Control de gastos' },
       { name: 'Libro Diario', href: '/legacy/libro-diario', icon: '📖', description: 'Registro cronológico' },
+      { name: 'Cumplimiento SEIL', href: '/cumplimiento-seil', icon: '✅', description: 'Pago a contratistas y checklist fiscal', native: true },
     ]
   },
   {

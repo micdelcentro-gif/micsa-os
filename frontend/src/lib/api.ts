@@ -45,5 +45,46 @@ export const createExpedienteLegal = async (expediente: any) => {
   return data
 }
 
+// Proyectos Endpoints
+export const getProyectos = async () => {
+  const { data } = await modernApi.get('/proyectos/')
+  return data
+}
+
+// Compliance Endpoints
+export const getComplianceExpedientes = async () => {
+  const { data } = await modernApi.get('/compliance/')
+  return data
+}
+
+export const createComplianceExpediente = async (expediente: any) => {
+  const { data } = await modernApi.post('/compliance/', expediente)
+  return data
+}
+
+export const updateComplianceExpediente = async (id: string, update: any) => {
+  const { data } = await modernApi.put(`/compliance/${id}`, update)
+  return data
+}
+
+export const uploadComplianceDocument = async (id: string, category: string, field: string, file: File) => {
+  const formData = new FormData()
+  formData.append('category', category)
+  formData.append('field', field)
+  formData.append('file', file)
+
+  const { data } = await modernApi.post(`/compliance/${id}/upload`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return data
+}
+
+export const sendComplianceExpediente = async (id: string) => {
+  const { data } = await modernApi.post(`/compliance/${id}/send`)
+  return data
+}
+
 export default api
 export { modernApi }

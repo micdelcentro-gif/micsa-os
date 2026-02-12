@@ -4,3 +4,5 @@ from .cotizacion import Cotizacion
 from .proyecto import Proyecto, FirmaRequest
 from .epp import EppItem
 from .legal import ExpedienteLegal, MovimientoLegal
+from .empleado import Empleado, EmpleadoDocumento
+from .compliance import ComplianceExpediente
