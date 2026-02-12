@@ -90,10 +90,10 @@ export default function DashboardLayout({
             { name: 'Bajas / Histórico', href: '/trabajadores/inactivos', icon: '📂' }
           ]
         },
-        { name: 'Empleados (Admin)', href: '/legacy/employees', icon: '👥' },
+        { name: 'Gestión RH', href: '/empleados', icon: '👥', badge: 'V1.0' },
+        { name: 'Empleados (Legacy)', href: '/legacy/employees', icon: '👣' },
         { name: 'Capacitaciones', href: '/capacitaciones', icon: '🎓' },
         { name: 'Nómina', href: '/legacy/nomina', icon: '💰' },
-        { name: 'Config RH', href: '/legacy/config-rh', icon: '⚙️' },
       ]
     },
     {
